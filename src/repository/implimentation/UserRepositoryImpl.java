@@ -9,7 +9,6 @@ import java.util.List;
 public class UserRepositoryImpl implements UserRepository {
     private final Connection connection;
 
-    // Constructor accepting a Connection
     public UserRepositoryImpl(Connection connection) {
         this.connection = connection;
     }

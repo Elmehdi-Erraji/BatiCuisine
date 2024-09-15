@@ -11,14 +11,6 @@ public class User {
     private boolean isProfessional;
     private List<Project> projects;
 
-    public User(int id, String name, String address, String phone, boolean isProfessional, List<Project> projects) {
-        this.id = id;
-        this.name = name;
-        this.address = address;
-        this.phone = phone;
-        this.isProfessional = isProfessional;
-        this.projects = projects;
-    }
 
     public User(int id, String name, String address, String phone, boolean isProfessional) {
         this.id = id;
@@ -26,10 +18,9 @@ public class User {
         this.address = address;
         this.phone = phone;
         this.isProfessional = isProfessional;
-        this.projects = null; // No projects at creation
+        this.projects = null;
     }
     public User(){
-
     }
 
     public int getId() {

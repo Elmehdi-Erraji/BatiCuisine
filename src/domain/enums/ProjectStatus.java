@@ -1,7 +1,7 @@
 package domain.enums;
 
 public enum ProjectStatus {
-    IN_PROGRESS,
+    INPROGRESS,
     COMPLETED,
     CANCELED
 }

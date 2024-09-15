@@ -21,7 +21,7 @@ public class ProjectRepositoryImpl implements ProjectRepository {
 
     @Override
     public void addProject(Project project) {
-        String query = "INSERT INTO projects (name, profit_margin, total_cost, project_status, user_id) VALUES (?, ?, ?, ?, ?)";
+        String query = "INSERT INTO projects (name, profitmargin, totalcost, status, client_id) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setString(1, project.getName());
             ps.setDouble(2, project.getProfitMargin());
@@ -33,8 +33,11 @@ public class ProjectRepositoryImpl implements ProjectRepository {
                 ps.setDouble(3, project.getTotalCost());
             }
 
-            ps.setString(4, project.getProjectStatus().toString());
+            // Handle enum value for status
+            ps.setObject(4, project.getProjectStatus().name(), Types.OTHER); // Use Types.OTHER for enum types
+
             ps.setInt(5, project.getUser().getId());
+
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -74,19 +77,31 @@ public class ProjectRepositoryImpl implements ProjectRepository {
 
     @Override
     public void updateProject(Project project) {
-        String query = "UPDATE projects SET name = ?, profit_margin = ?, total_cost = ?, project_status = ?, user_id = ? WHERE id = ?";
+        String query = "UPDATE projects SET name = ?, profitmargin = ?, totalcost = ?, status = ?, client_id = ? WHERE id = ?";
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setString(1, project.getName());
             ps.setDouble(2, project.getProfitMargin());
-            ps.setDouble(3, project.getTotalCost());
-            ps.setString(4, project.getProjectStatus().toString());
+
+            // Handle null value for total cost
+            if (project.getTotalCost() == null) {
+                ps.setNull(3, Types.DOUBLE); // Set total cost as NULL in the database
+            } else {
+                ps.setDouble(3, project.getTotalCost());
+            }
+
+            // Handle enum value for status
+            ps.setObject(4, project.getProjectStatus().name(), Types.OTHER); // Use Types.OTHER for enum types
+
             ps.setInt(5, project.getUser().getId());
             ps.setInt(6, project.getId());
+
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
+
 
     @Override
     public void deleteProject(int id) {
@@ -103,10 +118,10 @@ public class ProjectRepositoryImpl implements ProjectRepository {
     private Project mapRowToProject(ResultSet rs) throws SQLException {
         int id = rs.getInt("id");
         String name = rs.getString("name");
-        double profitMargin = rs.getDouble("profit_margin");
-        double totalCost = rs.getDouble("total_cost");
-        ProjectStatus status = ProjectStatus.valueOf(rs.getString("project_status"));
-        int userId = rs.getInt("user_id");
+        double profitMargin = rs.getDouble("profitmargin");
+        double totalCost = rs.getDouble("totalcost");
+        ProjectStatus status = ProjectStatus.valueOf(rs.getString("status"));
+        int userId = rs.getInt("client_id");
 
         // Use injected userService to get the User object
         User user = userService.getUserById(userId);

@@ -7,10 +7,11 @@ public class Project {
     private String name;
     private double profitMargin;
     private Double totalCost;
-
     private ProjectStatus projectStatus;
 
     private User user;
+
+
 
     public Project(int id, String name, double profitMargin, double totalCost, ProjectStatus projectStatus, User user) {
         this.id = id;
@@ -79,5 +80,9 @@ public class Project {
                 ", projectStatus=" + projectStatus +
                 ", user=" + user +
                 '}';
+    }
+
+    public void setStatus(ProjectStatus projectStatus) {
+        this.projectStatus = projectStatus;
     }
 }

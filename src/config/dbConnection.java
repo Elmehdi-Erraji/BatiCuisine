@@ -8,7 +8,6 @@ public class dbConnection {
     private static Connection connection = null;
 
     private dbConnection() {
-        // Private constructor to prevent instantiation
     }
 
     public static Connection getConnection() {
@@ -16,7 +15,6 @@ public class dbConnection {
             synchronized (dbConnection.class) {
                 if (connection == null) {
                     try {
-                        // Initialize the database connection
                         connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/batiCuisine", "batiCuisine", "");
                     } catch (SQLException e) {
                         e.printStackTrace();
@@ -26,4 +24,5 @@ public class dbConnection {
         }
         return connection;
     }
+
 }
