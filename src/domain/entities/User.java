@@ -85,4 +85,16 @@ public class User {
             this.projects.add(project);
         }
     }
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", phone='" + phone + '\'' +
+                ", isProfessional=" + isProfessional +
+                ", projects=" + (projects != null ? projects : "No projects") +
+                '}';
+    }
+
 }
