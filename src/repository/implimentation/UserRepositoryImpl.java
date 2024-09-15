@@ -2,17 +2,16 @@ package repository.implimentation;
 
 import domain.entities.User;
 import repository.Interfaces.UserRepository;
-import config.dbConnection;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class UserRepositoryImpl implements UserRepository {
-    private Connection connection;
+    private final Connection connection;
 
-    public UserRepositoryImpl() {
-        this.connection = dbConnection.getConnection();
+    // Constructor accepting a Connection
+    public UserRepositoryImpl(Connection connection) {
+        this.connection = connection;
     }
 
     @Override

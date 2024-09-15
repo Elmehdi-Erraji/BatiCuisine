@@ -6,15 +6,12 @@ public class Project {
     private int id;
     private String name;
     private double profitMargin;
-    private double totalCost;
+    private Double totalCost;
 
-    // Enum instead of String for projectStatus
     private ProjectStatus projectStatus;
 
-    // Many-to-one relationship: A Project belongs to a single User
     private User user;
 
-    // Constructor
     public Project(int id, String name, double profitMargin, double totalCost, ProjectStatus projectStatus, User user) {
         this.id = id;
         this.name = name;
@@ -24,7 +21,6 @@ public class Project {
         this.user = user;
     }
 
-    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -49,11 +45,11 @@ public class Project {
         this.profitMargin = profitMargin;
     }
 
-    public double getTotalCost() {
+    public Double getTotalCost() {
         return totalCost;
     }
 
-    public void setTotalCost(double totalCost) {
+    public void setTotalCost(Double totalCost) {
         this.totalCost = totalCost;
     }
 

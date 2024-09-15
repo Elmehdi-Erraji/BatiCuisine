@@ -1,17 +1,23 @@
 package ui;
 
+import config.dbConnection;
 import domain.entities.User;
 import repository.Interfaces.UserRepository;
 import repository.implimentation.UserRepositoryImpl;
-import service.*;
+import service.UserService;
 
+import java.sql.Connection;
 import java.util.List;
 import java.util.Scanner;
 
 public class UserCRUDMenu {
 
     public static void main(String[] args) {
-        UserRepository userRepository = new UserRepositoryImpl();
+        // Get database connection
+        Connection connection = dbConnection.getConnection();
+
+        // Pass connection to UserRepositoryImpl
+        UserRepository userRepository = new UserRepositoryImpl(connection);
         UserService userService = new UserService(userRepository);
 
         Scanner scanner = new Scanner(System.in);
@@ -95,5 +101,12 @@ public class UserCRUDMenu {
 
         // Close the scanner
         scanner.close();
+
+        // Close the database connection when done
+        try {
+            connection.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

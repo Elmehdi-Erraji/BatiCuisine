@@ -1,5 +1,6 @@
 package domain.entities;
 
+import javax.swing.plaf.multi.MultiSeparatorUI;
 import java.util.List;
 
 public class User {
@@ -8,9 +9,8 @@ public class User {
     private String address;
     private String phone;
     private boolean isProfessional;
-    private List<Project> projects; // Association with Project
+    private List<Project> projects;
 
-    // Constructor for creating a user with projects
     public User(int id, String name, String address, String phone, boolean isProfessional, List<Project> projects) {
         this.id = id;
         this.name = name;
@@ -20,7 +20,6 @@ public class User {
         this.projects = projects;
     }
 
-    // Overloaded constructor for creating a user without projects
     public User(int id, String name, String address, String phone, boolean isProfessional) {
         this.id = id;
         this.name = name;
@@ -29,8 +28,10 @@ public class User {
         this.isProfessional = isProfessional;
         this.projects = null; // No projects at creation
     }
+    public User(){
 
-    // Getters and setters
+    }
+
     public int getId() {
         return id;
     }
@@ -93,7 +94,7 @@ public class User {
                 ", address='" + address + '\'' +
                 ", phone='" + phone + '\'' +
                 ", isProfessional=" + isProfessional +
-                ", projects=" + (projects != null ? projects : "No projects") +
+                ", projects=" + (projects != null ? projects : " No projects") +
                 '}';
     }
 
