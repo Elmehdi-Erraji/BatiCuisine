@@ -16,7 +16,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public void create(User user) {
         try {
-            String sql = "INSERT INTO users (name, address, phone, isProfessional) VALUES (?, ?, ?, ?)";
+            String sql = "INSERT INTO clients (name, address, phone, isProfessional) VALUES (?, ?, ?, ?)";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, user.getName());
             statement.setString(2, user.getAddress());
@@ -32,7 +32,7 @@ public class UserRepositoryImpl implements UserRepository {
     public User findById(int id) {
         User user = null;
         try {
-            String sql = "SELECT * FROM users WHERE id = ?";
+            String sql = "SELECT * FROM clients WHERE id = ?";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();
@@ -53,7 +53,7 @@ public class UserRepositoryImpl implements UserRepository {
     public List<User> findAll() {
         List<User> users = new ArrayList<>();
         try {
-            String sql = "SELECT * FROM users";
+            String sql = "SELECT * FROM clients";
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
             while (resultSet.next()) {
@@ -73,7 +73,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public void update(User user) {
         try {
-            String sql = "UPDATE users SET name = ?, address = ?, phone = ?, isProfessional = ? WHERE id = ?";
+            String sql = "UPDATE clients SET name = ?, address = ?, phone = ?, isProfessional = ? WHERE id = ?";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, user.getName());
             statement.setString(2, user.getAddress());
@@ -89,7 +89,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public void delete(int id) {
         try {
-            String sql = "DELETE FROM users WHERE id = ?";
+            String sql = "DELETE FROM clients WHERE id = ?";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, id);
             statement.executeUpdate();
