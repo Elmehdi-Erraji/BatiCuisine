@@ -51,4 +51,5 @@ CREATE TABLE Quotes (
     isAccepted BOOLEAN,
     project_id INT,
     FOREIGN KEY (project_id) REFERENCES Projects(id) ON DELETE CASCADE
+                    
 );
