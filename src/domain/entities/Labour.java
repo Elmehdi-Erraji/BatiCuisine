@@ -58,5 +58,5 @@ public class Labour extends Component {
         this.productivityRate = productivityRate;
     }
 
-    
+
 }

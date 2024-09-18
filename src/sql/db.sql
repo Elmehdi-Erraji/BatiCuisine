@@ -18,38 +18,32 @@ CREATE TABLE Projects (
     FOREIGN KEY (client_id) REFERENCES Clients(id) ON DELETE CASCADE
 );
 
-CREATE TABLE Components (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    componentType VARCHAR(255),
-    vatRate DOUBLE PRECISION
+CREATE TABLE Composants (
+                            id SERIAL PRIMARY KEY,
+                            name VARCHAR(255) NOT NULL,
+                            taxRate DOUBLE PRECISION
 );
 
-CREATE TABLE Materials (
-    id SERIAL PRIMARY KEY,
-    component_id INT,
-    unitCost DOUBLE PRECISION,
-    quantity DOUBLE PRECISION,
-    transportCost DOUBLE PRECISION,
-    qualityCoefficient DOUBLE PRECISION,
-    FOREIGN KEY (component_id) REFERENCES Components(id) ON DELETE CASCADE
-);
+CREATE TABLE Materiaux (
+                           id SERIAL PRIMARY KEY,
+                           unitCost DOUBLE PRECISION,
+                           quantity DOUBLE PRECISION,
+                           transportCost DOUBLE PRECISION,
+                           qualityCoefficient DOUBLE PRECISION
+) inherits (Composants);
 
-CREATE TABLE Labor (
-    id SERIAL PRIMARY KEY,
-    component_id INT,
-    hourlyRate DOUBLE PRECISION,
-    workHours DOUBLE PRECISION,
-    workerProductivity DOUBLE PRECISION,
-    FOREIGN KEY (component_id) REFERENCES Components(id) ON DELETE CASCADE
-);
-
-CREATE TABLE Quotes (
-    id SERIAL PRIMARY KEY,
-    estimatedAmount DOUBLE PRECISION,
-    issueDate DATE,
-    isAccepted BOOLEAN,
-    project_id INT,
-    FOREIGN KEY (project_id) REFERENCES Projects(id) ON DELETE CASCADE
-                    
+CREATE TABLE MainDœuvre (
+                            id SERIAL PRIMARY KEY,
+                            hourlyRate DOUBLE PRECISION,
+                            workHoursCount DOUBLE PRECISION,
+                            productivityRate DOUBLE PRECISION
+) inherits (Composants);
+CREATE TABLE Devis (
+                       id SERIAL PRIMARY KEY,
+                       estimatedPrice DOUBLE PRECISION,
+                       issueDate DATE,
+                       validityDate DATE,
+                       accepted BOOLEAN,
+                       project_id INT,
+                       FOREIGN KEY (project_id) REFERENCES Projets(id) ON DELETE CASCADE
 );
