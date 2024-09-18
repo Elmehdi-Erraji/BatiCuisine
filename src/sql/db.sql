@@ -38,6 +38,8 @@ CREATE TABLE MainDœuvre (
                             workHoursCount DOUBLE PRECISION,
                             productivityRate DOUBLE PRECISION
 ) inherits (Composants);
+
+
 CREATE TABLE Devis (
                        id SERIAL PRIMARY KEY,
                        estimatedPrice DOUBLE PRECISION,
