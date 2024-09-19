@@ -1,87 +1,58 @@
-create table clients
-(
-    id             serial
-        primary key,
-    name           varchar(255) not null,
-    address        varchar(255),
-    phone          varchar(20),
-    isprofessional boolean      not null
+CREATE TABLE clients (
+    id             SERIAL PRIMARY KEY,
+    name           VARCHAR(255) NOT NULL,
+    address        VARCHAR(255),
+    phone          VARCHAR(20),
+    isprofessional BOOLEAN NOT NULL
 );
 
-alter table clients
-    owner to "batiCuisine";
+ALTER TABLE clients OWNER TO "batiCuisine";
 
-create table projects
-(
-    id           serial
-        primary key,
-    name         varchar(255) not null,
-    profitmargin double precision,
-    totalcost    double precision,
+CREATE TABLE projects (
+    id           SERIAL PRIMARY KEY,
+    name         VARCHAR(255) NOT NULL,
+    profitmargin DOUBLE PRECISION,
+    totalcost    DOUBLE PRECISION,
     status       projectstatus,
-    client_id    integer
-        references clients
-            on delete cascade
+    client_id    INTEGER REFERENCES clients(id) ON DELETE CASCADE
 );
 
-alter table projects
-    owner to "batiCuisine";
+ALTER TABLE projects OWNER TO "batiCuisine";
 
-create table composants
-(
-    id      serial
-        primary key,
-    name    varchar(255) not null,
-    taxrate double precision
+CREATE TABLE composants (
+    id      SERIAL PRIMARY KEY,
+    name    VARCHAR(255) NOT NULL,
+    taxrate DOUBLE PRECISION
 );
 
-alter table composants
-    owner to "batiCuisine";
+ALTER TABLE composants OWNER TO "batiCuisine";
 
-create table material
-(
-    id                 integer default nextval('materiaux_id_seq'::regclass) not null
-        constraint materiaux_pkey
-            primary key,
-    unitcost           double precision,
-    quantity           double precision,
-    transportcost      double precision,
-    qualitycoefficient double precision
-)
-    inherits (composants);
+CREATE TABLE material (
+    id                 INTEGER DEFAULT nextval('materiaux_id_seq'::regclass) NOT NULL PRIMARY KEY,
+    unitcost           DOUBLE PRECISION,
+    quantity           DOUBLE PRECISION,
+    transportcost      DOUBLE PRECISION,
+    qualitycoefficient DOUBLE PRECISION
+) INHERITS (composants);
 
-alter table material
-    owner to "batiCuisine";
+ALTER TABLE material OWNER TO "batiCuisine";
 
-create table labours
-(
-    id               integer default nextval('maindoeuvre_id_seq'::regclass) not null
-        constraint maindoeuvre_pkey
-            primary key,
-    hourlyrate       double precision,
-    workhourscount   double precision,
-    productivityrate double precision
-)
-    inherits (composants);
+CREATE TABLE labours (
+    id               INTEGER DEFAULT nextval('maindoeuvre_id_seq'::regclass) NOT NULL PRIMARY KEY,
+    hourlyrate       DOUBLE PRECISION,
+    workhourscount   DOUBLE PRECISION,
+    productivityrate DOUBLE PRECISION
+) INHERITS (composants);
 
-alter table labours
-    owner to "batiCuisine";
+ALTER TABLE labours OWNER TO "batiCuisine";
 
-create table quotes
-(
-    id             integer default nextval('devis_id_seq'::regclass) not null
-        constraint devis_pkey
-            primary key,
-    estimatedprice double precision,
-    issuedate      date,
-    validitydate   date,
-    accepted       boolean,
-    project_id     integer
-        constraint devis_project_id_fkey
-            references projects
-            on delete cascade
+CREATE TABLE quotes (
+    id             INTEGER DEFAULT nextval('devis_id_seq'::regclass) NOT NULL PRIMARY KEY,
+    estimatedprice DOUBLE PRECISION,
+    issuedate      DATE,
+    validitydate   DATE,
+    accepted       BOOLEAN,
+    project_id     INTEGER REFERENCES projects(id) ON DELETE CASCADE
 );
 
-alter table quotes
-    owner to "batiCuisine";
-
+ALTER TABLE quotes OWNER TO "batiCuisine";
