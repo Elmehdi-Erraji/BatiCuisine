@@ -1,6 +1,5 @@
 package repository.implimentation;
 
-
 import domain.entities.Project;
 import domain.entities.User;
 import domain.enums.ProjectStatus;
@@ -29,14 +28,15 @@ public class ProjectRepositoryImpl implements ProjectRepository {
 
             // Handle null value for total cost
             if (project.getTotalCost() == null) {
-                ps.setNull(3, Types.DOUBLE); // Set total cost as NULL in the database
+                ps.setNull(3, Types.DOUBLE);
             } else {
                 ps.setDouble(3, project.getTotalCost());
             }
 
             // Handle enum value for status
-            ps.setObject(4, project.getProjectStatus().name(), Types.OTHER); // Use Types.OTHER for enum types
+            ps.setString(4, project.getProjectStatus().name());
 
+            // Set the client_id (user ID)
             ps.setInt(5, project.getUser().getId());
 
             ps.executeUpdate();
@@ -44,7 +44,6 @@ public class ProjectRepositoryImpl implements ProjectRepository {
             e.printStackTrace();
         }
     }
-
 
     @Override
     public Project getProjectById(int id) {
@@ -85,15 +84,18 @@ public class ProjectRepositoryImpl implements ProjectRepository {
 
             // Handle null value for total cost
             if (project.getTotalCost() == null) {
-                ps.setNull(3, Types.DOUBLE); // Set total cost as NULL in the database
+                ps.setNull(3, Types.DOUBLE);
             } else {
                 ps.setDouble(3, project.getTotalCost());
             }
 
             // Handle enum value for status
-            ps.setObject(4, project.getProjectStatus().name(), Types.OTHER); // Use Types.OTHER for enum types
+            ps.setString(4, project.getProjectStatus().name());
 
+            // Set the client_id (user ID)
             ps.setInt(5, project.getUser().getId());
+
+            // Set the project ID
             ps.setInt(6, project.getId());
 
             ps.executeUpdate();
@@ -101,8 +103,6 @@ public class ProjectRepositoryImpl implements ProjectRepository {
             e.printStackTrace();
         }
     }
-
-
 
     @Override
     public void deleteProject(int id) {
@@ -115,7 +115,6 @@ public class ProjectRepositoryImpl implements ProjectRepository {
         }
     }
 
-    // Updated method to use the injected UserService
     private Project mapRowToProject(ResultSet rs) throws SQLException {
         int id = rs.getInt("id");
         String name = rs.getString("name");
@@ -124,8 +123,9 @@ public class ProjectRepositoryImpl implements ProjectRepository {
         ProjectStatus status = ProjectStatus.valueOf(rs.getString("status"));
         int userId = rs.getInt("client_id");
 
-        // Use injected userService to get the User object
+        // Fetch the User using the UserService
         User user = userService.getUserById(userId);
-        return new Project(id, name, profitMargin, totalCost, status, user);
+
+        return new Project();
     }
 }

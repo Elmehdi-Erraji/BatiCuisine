@@ -13,10 +13,8 @@ import java.util.Scanner;
 public class UserCRUDMenu {
 
     public static void main(String[] args) {
-        // Get database connection
         Connection connection = dbConnection.getConnection();
 
-        // Pass connection to UserRepositoryImpl
         UserRepository userRepository = new UserRepositoryImpl(connection);
         UserService userService = new UserService(userRepository);
 
@@ -99,10 +97,8 @@ public class UserCRUDMenu {
             }
         }
 
-        // Close the scanner
         scanner.close();
 
-        // Close the database connection when done
         try {
             connection.close();
         } catch (Exception e) {

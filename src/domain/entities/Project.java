@@ -2,26 +2,32 @@ package domain.entities;
 
 import domain.enums.ProjectStatus;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Project {
     private int id;
     private String name;
     private double profitMargin;
     private Double totalCost;
     private ProjectStatus projectStatus;
-
     private User user;
+    private List<Component> components;
 
-
-
-    public Project(int id, String name, double profitMargin, double totalCost, ProjectStatus projectStatus, User user) {
-        this.id = id;
+    public Project(String name, double profitMargin, Double totalCost, ProjectStatus projectStatus, User user, List<Component> components) {
         this.name = name;
         this.profitMargin = profitMargin;
         this.totalCost = totalCost;
         this.projectStatus = projectStatus;
         this.user = user;
+        this.components = components;
     }
 
+    public Project() {
+
+    }
+
+    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -70,6 +76,14 @@ public class Project {
         this.user = user;
     }
 
+    public List<Component> getComponents() {
+        return components;
+    }
+
+    public void setComponents(List<Component> components) {
+        this.components = components;
+    }
+
     @Override
     public String toString() {
         return "Project{" +
@@ -79,10 +93,7 @@ public class Project {
                 ", totalCost=" + totalCost +
                 ", projectStatus=" + projectStatus +
                 ", user=" + user +
+                ", components=" + components + // Include components in toString
                 '}';
-    }
-
-    public void setStatus(ProjectStatus projectStatus) {
-        this.projectStatus = projectStatus;
     }
 }
