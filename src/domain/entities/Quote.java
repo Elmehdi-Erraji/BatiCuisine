@@ -8,17 +8,18 @@ public class Quote {
     private LocalDate issueDate;
     private LocalDate validityDate;
     private Boolean accepted;
-    private Integer projectId;
+    private Project project;
 
-    public Quote(Integer id, Double estimatedPrice, LocalDate issueDate, LocalDate validityDate, Boolean accepted, Integer projectId) {
+    public Quote(Integer id, Double estimatedPrice, LocalDate issueDate, LocalDate validityDate, Boolean accepted, Project project) {
         this.id = id;
         this.estimatedPrice = estimatedPrice;
         this.issueDate = issueDate;
         this.validityDate = validityDate;
         this.accepted = accepted;
-        this.projectId = projectId;
+        this.project = project;
     }
 
+    // Getters and setters
     public Integer getId() {
         return id;
     }
@@ -59,11 +60,23 @@ public class Quote {
         this.accepted = accepted;
     }
 
-    public Integer getProjectId() {
-        return projectId;
+    public Project getProject() {
+        return project;
     }
 
-    public void setProjectId(Integer projectId) {
-        this.projectId = projectId;
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
+    @Override
+    public String toString() {
+        return "Quote{" +
+                "id=" + id +
+                ", estimatedPrice=" + estimatedPrice +
+                ", issueDate=" + issueDate +
+                ", validityDate=" + validityDate +
+                ", accepted=" + accepted +
+                ", project=" + project +
+                '}';
     }
 }

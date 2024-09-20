@@ -2,31 +2,38 @@ package domain.entities;
 
 import domain.enums.ProjectStatus;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Project {
-    private int id;
+    private Integer id;
     private String name;
-    private double profitMargin;
+    private Double profitMargin;
     private Double totalCost;
     private ProjectStatus projectStatus;
+    private Client client;
+    private List<Component> components;
 
-    private User user;
-
-
-
-    public Project(int id, String name, double profitMargin, double totalCost, ProjectStatus projectStatus, User user) {
+    public Project(Integer id, String name, double profitMargin, Double totalCost, ProjectStatus projectStatus) {
         this.id = id;
         this.name = name;
         this.profitMargin = profitMargin;
-        this.totalCost = totalCost;
+        this.totalCost = 0.0;
         this.projectStatus = projectStatus;
-        this.user = user;
+        this.client = null;
+        this.components = new ArrayList<>();
     }
 
-    public int getId() {
+    public Project() {
+    }
+
+
+    // Getters and Setters
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -62,13 +69,23 @@ public class Project {
         this.projectStatus = projectStatus;
     }
 
-    public User getUser() {
-        return user;
+    public Client getClient() {
+        return client; // Changed from User to Client
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setClient(Client client) {
+        this.client = client; // Changed from User to Client
     }
+
+    public List<Component> getComponents() {
+        return components;
+    }
+
+    public void setComponents(List<Component> components) {
+        this.components = components;
+    }
+
+
 
     @Override
     public String toString() {
@@ -78,11 +95,8 @@ public class Project {
                 ", profitMargin=" + profitMargin +
                 ", totalCost=" + totalCost +
                 ", projectStatus=" + projectStatus +
-                ", user=" + user +
+                ", client=" + client + // Changed from User to Client
+                ", components=" + components +
                 '}';
-    }
-
-    public void setStatus(ProjectStatus projectStatus) {
-        this.projectStatus = projectStatus;
     }
 }
