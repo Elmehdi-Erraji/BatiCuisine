@@ -1,26 +1,23 @@
-package repositories.Devis;
+package repository.implimentation;
 
-
-import Config.DBConnection;
-import Entities.Client;
-import Entities.Devis;
-import Entities.Projet;
-import Enums.EtatProject;
-import Utils.Mappers;
-import repositories.Projet.ProjetRepositoryImpl;
+import config.DBConnection;
+import domain.entities.Client;
+import domain.entities.Quote;
+import repository.Interfaces.QuoteRepository;
+import utils.Mappers;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class DevisRepositoryImpl implements DevisRepository {
+public class QuoteRepositoryImpl implements QuoteRepository {
     private DBConnection dbConnection;
     private Connection connection = null;
 
     @Override
-    public Devis save(Devis devis) {
-        String sql = devis.getId() == null ? "INSERT INTO Devis (estimatedPrice, issueDate, validityDate, accepted, project_id) VALUES (?, ?, ?, ?, ?)" : "UPDATE Devis SET estimatedPrice = ?, issueDate = ?, validityDate = ?, accepted = ?, project_id = ? WHERE id = ?";
+    public Quote save(Quote Quote) {
+        String sql = Quote.getId() == null ? "INSERT INTO Quote (estimatedPrice, issueDate, validityDate, accepted, project_id) VALUES (?, ?, ?, ?, ?)" : "UPDATE Quote SET estimatedPrice = ?, issueDate = ?, validityDate = ?, accepted = ?, project_id = ? WHERE id = ?";
 
         try {
             dbConnection = DBConnection.getInstance();
@@ -28,28 +25,28 @@ public class DevisRepositoryImpl implements DevisRepository {
                 connection = dbConnection.getConnection();
 
                 try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-                    stmt.setDouble(1, devis.getEstimatedPrice());
-                    stmt.setDate(2, Date.valueOf(devis.getIssueDate()));
-                    stmt.setDate(3, Date.valueOf(devis.getValidityDate()));
-                    stmt.setBoolean(4, devis.getAccepted());
-                    stmt.setInt(5, devis.getProjet().getId());
+                    stmt.setDouble(1, Quote.getEstimatedPrice());
+                    stmt.setDate(2, Date.valueOf(Quote.getIssueDate()));
+                    stmt.setDate(3, Date.valueOf(Quote.getValidityDate()));
+                    stmt.setBoolean(4, Quote.getAccepted());
+                    stmt.setInt(5, Quote.getProject().getId());
 
-                    if (devis.getId() != null) {
-                        stmt.setInt(6, devis.getId());
+                    if (Quote.getId() != null) {
+                        stmt.setInt(6, Quote.getId());
                     }
 
                     int affectedRows = stmt.executeUpdate();
 
                     if (affectedRows == 0) {
-                        throw new SQLException("Creating devis failed, no rows affected.");
+                        throw new SQLException("Creating Quote failed, no rows affected.");
                     }
 
-                    if (devis.getId() == null) {
+                    if (Quote.getId() == null) {
                         try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
                             if (generatedKeys.next()) {
-                                devis.setId(generatedKeys.getInt(1));
+                                Quote.setId(generatedKeys.getInt(1));
                             } else {
-                                throw new SQLException("Creating devis failed, no ID obtained.");
+                                throw new SQLException("Creating Quote failed, no ID obtained.");
                             }
                         }
                     }
@@ -66,12 +63,12 @@ public class DevisRepositoryImpl implements DevisRepository {
         }
 
 
-        return devis;
+        return Quote;
     }
 
     @Override
-    public Optional<Devis> findById(Integer id) {
-        String sql = "SELECT * FROM Devis WHERE id = ?";
+    public Optional<Quote> findById(Integer id) {
+        String sql = "SELECT * FROM Quote WHERE id = ?";
 
         try {
             dbConnection = DBConnection.getInstance();
@@ -81,7 +78,7 @@ public class DevisRepositoryImpl implements DevisRepository {
                     stmt.setInt(1, id);
                     ResultSet rs = stmt.executeQuery();
                     if (rs.next()) {
-                        return Optional.of(Mappers.mapResultSetToDevis(rs));
+                        return Optional.of(Mappers.mapResultSetToQuote(rs));
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -100,9 +97,9 @@ public class DevisRepositoryImpl implements DevisRepository {
     }
 
     @Override
-    public List<Devis> findAll() {
-        List<Devis> devisList = new ArrayList<>();
-        String sql = "SELECT * FROM Devis";
+    public List<Quote> findAll() {
+        List<Quote> QuoteList = new ArrayList<>();
+        String sql = "SELECT * FROM Quote";
         try {
             dbConnection = DBConnection.getInstance();
             if (dbConnection != null) {
@@ -110,7 +107,7 @@ public class DevisRepositoryImpl implements DevisRepository {
 
                 try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
                     while (rs.next()) {
-                        devisList.add(Mappers.mapResultSetToDevis(rs));
+                        QuoteList.add(Mappers.mapResultSetToQuote(rs));
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -125,12 +122,12 @@ public class DevisRepositoryImpl implements DevisRepository {
         }
 
 
-        return devisList;
+        return QuoteList;
     }
 
     @Override
     public void deleteById(Integer id) {
-        String sql = "DELETE FROM Devis WHERE id = ?";
+        String sql = "DELETE FROM Quote WHERE id = ?";
         try {
             dbConnection = DBConnection.getInstance();
             if (dbConnection != null) {
@@ -154,8 +151,8 @@ public class DevisRepositoryImpl implements DevisRepository {
     }
 
     @Override
-    public List<Devis> findDevisJoinProjectsById(Client client) {
-        List<Devis> devisList = new ArrayList<>();
+    public List<Quote> findQuoteWithProjectById(Client client) {
+        List<Quote> devisList = new ArrayList<>();
         String sql = "Select * FROM Devis d JOIN projets p ON d.project_id = p.id WHERE p.client_id = ?";
 
         try {
@@ -185,47 +182,48 @@ public class DevisRepositoryImpl implements DevisRepository {
         return devisList;
     }
 
+
     @Override
-    public Devis update(Devis devis) {
-        if (devis.getId() == null) {
-            throw new IllegalArgumentException("Cannot update a Devis without an ID");
+    public Quote update(Quote Quote) {
+        if (Quote.getId() == null) {
+            throw new IllegalArgumentException("Cannot update a Quote without an ID");
         }
 
-        StringBuilder sql = new StringBuilder("UPDATE Devis SET ");
+        StringBuilder sql = new StringBuilder("UPDATE Quote SET ");
         List<Object> params = new ArrayList<>();
         boolean needComma = false;
 
-        if (devis.getEstimatedPrice() != null) {
+        if (Quote.getEstimatedPrice() != null) {
             sql.append("estimatedPrice = ?");
-            params.add(devis.getEstimatedPrice());
+            params.add(Quote.getEstimatedPrice());
             needComma = true;
         }
-        if (devis.getIssueDate() != null) {
+        if (Quote.getIssueDate() != null) {
             if (needComma) sql.append(", ");
             sql.append("issueDate = ?");
-            params.add(Date.valueOf(devis.getIssueDate()));
+            params.add(Date.valueOf(Quote.getIssueDate()));
             needComma = true;
         }
-        if (devis.getValidityDate() != null) {
+        if (Quote.getValidityDate() != null) {
             if (needComma) sql.append(", ");
             sql.append("validityDate = ?");
-            params.add(Date.valueOf(devis.getValidityDate()));
+            params.add(Date.valueOf(Quote.getValidityDate()));
             needComma = true;
         }
-        if (devis.getAccepted() != null) {
+        if (Quote.getAccepted() != null) {
             if (needComma) sql.append(", ");
             sql.append("accepted = ?");
-            params.add(devis.getAccepted());
+            params.add(Quote.getAccepted());
             needComma = true;
         }
-        if (devis.getProjet() != null && devis.getProjet().getId() != null) {
+        if (Quote.getProject() != null && Quote.getProject().getId() != null) {
             if (needComma) sql.append(", ");
             sql.append("project_id = ?");
-            params.add(devis.getProjet().getId());
+            params.add(Quote.getProject().getId());
         }
 
         sql.append(" WHERE id = ?");
-        params.add(devis.getId());
+        params.add(Quote.getId());
 
         // Add this line to make the UPDATE statement return the updated row
         sql.append(" RETURNING *");
@@ -243,14 +241,14 @@ public class DevisRepositoryImpl implements DevisRepository {
                     int affectedRows = stmt.executeUpdate();
 
                     if (affectedRows == 0) {
-                        throw new SQLException("Updating devis failed, no rows affected.");
+                        throw new SQLException("Updating Quote failed, no rows affected.");
                     }
 
                     try (ResultSet rs = stmt.getGeneratedKeys()) {
                         if (rs.next()) {
-                            devis = Mappers.mapResultSetToDevis(rs);
+                            Quote = Mappers.mapResultSetToQuote(rs);
                         } else {
-                            throw new SQLException("Updating devis failed, no rows returned.");
+                            throw new SQLException("Updating Quote failed, no rows returned.");
                         }
                     }
                 }
@@ -263,7 +261,7 @@ public class DevisRepositoryImpl implements DevisRepository {
             }
         }
 
-        return devis;
+        return Quote;
     }
 
 

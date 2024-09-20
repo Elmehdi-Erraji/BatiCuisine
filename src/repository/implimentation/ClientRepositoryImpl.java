@@ -1,13 +1,16 @@
-package repositories.Client;
+package repository.implimentation;
 
-import Config.DBConnection;
-import Entities.Client;
-import Utils.Mappers;
+
+import config.DBConnection;
+import domain.entities.Client;
+import repository.Interfaces.ClientRepository;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import utils.Mappers;
 
 public class ClientRepositoryImpl implements ClientRepository {
     DBConnection dbConnection = null;
@@ -27,7 +30,7 @@ public class ClientRepositoryImpl implements ClientRepository {
                 try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                     stmt.setString(1, client.getName());
                     stmt.setString(2, client.getAddress());
-                    stmt.setString(3, client.getPhoneNumber());
+                    stmt.setString(3, client.getPhone());
                     stmt.setBoolean(4, client.getProfessional());
 
                     if (client.getId() != null) {

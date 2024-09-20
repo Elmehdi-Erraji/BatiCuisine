@@ -1,9 +1,8 @@
-package Utils;
+package utils;
 
-import Entities.Client;
-import Entities.Devis;
-import Entities.Projet;
-import Utils.Types.CostBreakdown;
+import domain.entities.Client;
+import domain.entities.Quote;
+import utils.Types.CostBreakdown;
 
 public class ConsolePrinter {
 
@@ -18,7 +17,7 @@ public class ConsolePrinter {
         System.out.println(" |               Client Menu              |");
         System.out.println(" +----------------------------------------+");
         System.out.println(" |  4. Add a Client                       |");
-        System.out.println(" |  5. Accept/Refuse Devis                |");
+        System.out.println(" |  5. Accept/Refuse Quote                |");
         System.out.println(" +----------------------------------------+");
         System.out.println(" |  6. Exit                               |");
         System.out.println(" +----------------------------------------+");
@@ -54,7 +53,7 @@ public class ConsolePrinter {
         System.out.println(" +----------------------------------------+");
         System.out.println(" | Name          | " + client.getName());
         System.out.println(" | Address       | "  + client.getAddress());
-        System.out.println(" | PhoneNumber   | "  + client.getPhoneNumber());
+        System.out.println(" | PhoneNumber   | "  + client.getPhone());
         System.out.println(" | Professional  | "  + client.getProfessional());
         System.out.println(" +----------------------------------------+");
         System.out.println(resetText);
@@ -80,24 +79,24 @@ public class ConsolePrinter {
 
     }
 
-    public static void  printDevis(Devis devis){
+    public static void  printQuote(Quote Quote){
         String redText = "\033[0;33m";
         String resetText = "\033[0m";
         System.out.println( redText);
         System.out.println(" +----------------------------------------+");
-        System.out.println(" |                  Devis                 |");
+        System.out.println(" |                  Quote                 |");
         System.out.println(" +----------------------------------------+");
-        System.out.println(" | Devis's ID        | " + devis.getId());
-        if (devis.getProjet().getClient() != null){
-            System.out.println(" | Client's Name     | " + devis.getProjet().getClient().getName());
+        System.out.println(" | Quote's ID        | " + Quote.getId());
+        if (Quote.getProject().getClient() != null){
+            System.out.println(" | Client's Name     | " + Quote.getProject().getClient().getName());
         }
-        if (devis.getProjet().getId() != null){
-            System.out.println(" | Project's ID      | " + devis.getProjet().getId());
-            System.out.println(" | Project's Name    | " + devis.getProjet().getProjectName());
+        if (Quote.getProject().getId() != null){
+            System.out.println(" | Project's ID      | " + Quote.getProject().getId());
+            System.out.println(" | Project's Name    | " + Quote.getProject().getProjectName());
         }
-        System.out.println(" | Project's Cost    | " + devis.getEstimatedPrice());
-        System.out.println(" | Devis is Accepted | "  + (devis.getAccepted() ? "Accepted" : "Rejected"));
-        System.out.println(" | Valid Until       | "  + devis.getValidityDate().toString());
+        System.out.println(" | Project's Cost    | " + Quote.getEstimatedPrice());
+        System.out.println(" | Quote is Accepted | "  + (Quote.getAccepted() ? "Accepted" : "Rejected"));
+        System.out.println(" | Valid Until       | "  + Quote.getValidityDate().toString());
         System.out.println(" +----------------------------------------+");
         System.out.println(resetText);
     }

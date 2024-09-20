@@ -1,21 +1,22 @@
-package repositories.Materiaux;
+package repository.implimentation;
 
-import Config.DBConnection;
-import Entities.Materiaux;
-import Enums.TypeComposant;
-import Utils.Mappers;
+
+import config.DBConnection;
+import domain.entities.Material;
+import repository.Interfaces.MaterialsRepository;
+import utils.Mappers;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class MateriauxRepositoryImpl implements MateriauxRepository {
+public class MaterialsRepositoryImpl implements MaterialsRepository {
     private DBConnection dbConnection;
     private Connection connection = null;
 
     @Override
-    public Materiaux save(Materiaux materiau) {
+    public Material save(Material materiau) {
         String sql = materiau.getId() == null ?
                 "INSERT INTO Materiaux (name, taxRate, unitCost, quantity, transportCost, qualityCoefficient, project_id) VALUES (?, ?, ?, ?, ?, ?, ?)" :
                 "UPDATE Materiaux SET name = ?, taxRate = ?, unitCost = ?, quantity = ?, transportCost = ?, qualityCoefficient = ? WHERE id = ?";
@@ -32,7 +33,7 @@ public class MateriauxRepositoryImpl implements MateriauxRepository {
                     stmt.setDouble(4, materiau.getQuantity());
                     stmt.setDouble(5, materiau.getTransportCost());
                     stmt.setDouble(6, materiau.getQualityCoefficient());
-                    stmt.setDouble(7, materiau.getProjet().getId());
+                    stmt.setDouble(7, materiau.getProject().getId());
 
 
                     if (materiau.getId() != null) {
@@ -57,7 +58,7 @@ public class MateriauxRepositoryImpl implements MateriauxRepository {
 
                 } catch (SQLException e) {
                     e.printStackTrace();
-                } finally {
+                }  finally {
                     if (dbConnection != null) {
                         dbConnection.closeConnection();
                     }
@@ -71,7 +72,7 @@ public class MateriauxRepositoryImpl implements MateriauxRepository {
     }
 
     @Override
-    public Optional<Materiaux> findById(Integer id) {
+    public Optional<Material> findById(Integer id) {
         String sql = "SELECT * FROM Materiaux WHERE id = ?";
 
         try {
@@ -101,8 +102,8 @@ public class MateriauxRepositoryImpl implements MateriauxRepository {
     }
 
     @Override
-    public List<Materiaux> findAll() {
-        List<Materiaux> materiauxList = new ArrayList<>();
+    public List<Material> findAll() {
+        List<Material> materialList = new ArrayList<>();
         String sql = "SELECT * FROM Materiaux";
 
         try {
@@ -113,7 +114,7 @@ public class MateriauxRepositoryImpl implements MateriauxRepository {
                 try (Statement stmt = connection.createStatement();
                      ResultSet rs = stmt.executeQuery(sql)) {
                     while (rs.next()) {
-                        materiauxList.add(Mappers.mapResultSetToMateriaux(rs));
+                        materialList.add(Mappers.mapResultSetToMateriaux(rs));
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -129,7 +130,7 @@ public class MateriauxRepositoryImpl implements MateriauxRepository {
 
 
 
-        return materiauxList;
+        return materialList;
     }
 
     @Override

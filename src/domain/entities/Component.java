@@ -6,15 +6,15 @@ public class Component {
     private String name;
     private Double taxRate;
     private ComponentType componentType;
-    private Project project;
+    private Project Project;
 
-    public Component(String name, Double taxRate,ComponentType componentType) {
+    public Component(String name, Double taxRate, ComponentType componentType) {
         this.name = name;
         this.taxRate = taxRate;
         this.componentType = componentType;
     }
 
-    // Getters and setters
+
     public String getName() {
         return name;
     }
@@ -30,6 +30,7 @@ public class Component {
     public void setTaxRate(Double taxRate) {
         this.taxRate = taxRate;
     }
+
     public ComponentType getComponentType() {
         return componentType;
     }
@@ -39,17 +40,10 @@ public class Component {
     }
 
     public Project getProject() {
-        return project;
+        return Project;
     }
 
-    public void setProject(Project projet) {
-        this.project = projet;
-    }
-    @Override
-    public String toString() {
-        return "Component{" +
-                "name='" + name + '\'' +
-                ", taxRate=" + taxRate +
-                '}';
+    public void setProject(Project Project) {
+        this.Project = Project;
     }
 }

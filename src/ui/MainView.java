@@ -1,23 +1,20 @@
+package ui;
 
-package Presentation;
-
-import Entities.*;
-import Enums.EtatProject;
-import Enums.TypeComposant;
-import Services.ClientService;
-import Services.DevisService;
-import Services.ProjetService;
-import Utils.ConsolePrinter;
-import Utils.Types.CostBreakdown;
-import repositories.Client.ClientRepository;
-import repositories.Client.ClientRepositoryImpl;
-import repositories.Projet.ProjetRepository;
-import repositories.Projet.ProjetRepositoryImpl;
+import domain.entities.*;
+import domain.enums.ProjectStatus;
+import domain.enums.ComponentType;
+import service.ClientService;
+import service.QuoteService;
+import service.ProjectService;
+import utils.ConsolePrinter;
+import utils.Types.CostBreakdown;
+import repository.Interfaces.ClientRepository;
+import repository.implimentation.ClientRepositoryImpl;
+import repository.Interfaces.ProjectRepository;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class MainView {
     private static final Scanner scanner = new Scanner(System.in);
@@ -59,11 +56,11 @@ public class MainView {
             Double profit = scanner.nextDouble();
             scanner.nextLine();
 
-            ProjetRepository projetRepository = new ProjetRepositoryImpl();
-            ProjetService projetService = new ProjetService(projetRepository);
+            ProjectRepository ProjectRepository = new repository.implimentation.ProjectRepositoryImpl();
+            ProjectService ProjectService = new ProjectService(ProjectRepository);
 
-            Projet projet = new Projet(null, projectName, profit, null,null, null);
-            projet.setClient(client.get());
+            Project Project = new Project(null, projectName, profit, null,null, null);
+            Project.setClient(client.get());
 
             materialsLoop:
             while (true){
@@ -72,8 +69,8 @@ public class MainView {
                 String componentsChoice = scanner.nextLine();
                 switch (componentsChoice){
                     case "y":
-                        Materiaux materiaux =  addMaterialsView();
-                        projet.getComposants().add(materiaux);
+                        Material material =  addMaterialsView();
+                        Project.getComponents().add(material);
                         ConsolePrinter.printSuccess("Material Has Been Added Successfully");
                         break;
                     case "n":
@@ -88,8 +85,8 @@ public class MainView {
                 String laborChoice = scanner.nextLine();
                 switch (laborChoice){
                     case "y":
-                        MainDoeuvre mainDoeuvre =  addLaborView();
-                        projet.getComposants().add(mainDoeuvre);
+                        Labour Labour =  addLaborView();
+                        Project.getComponents().add(Labour);
                         ConsolePrinter.printSuccess("Labor Has Been Added Successfully");
                         break;
                     case "n":
@@ -97,13 +94,13 @@ public class MainView {
                 }
             }
 
-            CostBreakdown  costBreakdown = calculateCost(projet.getComposants());
+            CostBreakdown costBreakdown = calculateCost(Project.getComponents());
 
             System.out.print(" ==> Do you want to apply a profit margin? [y/n]: ");
             String marginChoice = scanner.nextLine();
 
             if(marginChoice.equals("y")){
-                costBreakdown.setProfit(costBreakdown.getBaseCost() * (projet.getProfit() / 100));
+                costBreakdown.setProfit(costBreakdown.getBaseCost() * (Project.getProfit() / 100));
             }
 
             System.out.print(" ==> Do you want to apply a Discount to This Client? [y/n]: ");
@@ -114,15 +111,15 @@ public class MainView {
                 Double discount = scanner.nextDouble();
                 scanner.nextLine();
 
-                projet.setDiscount(discount);
+                Project.setDiscount(discount);
             }else {
-                projet.setDiscount(0.0);
+                Project.setDiscount(0.0);
             }
 
-            costBreakdown.setDiscount(costBreakdown.getProfit() * (projet.getDiscount() / 100));
+            costBreakdown.setDiscount(costBreakdown.getProfit() * (Project.getDiscount() / 100));
 
-            projet.setTotalCost(costBreakdown.getTotalCost());
-            projet.setProjectStatus(EtatProject.INPROGRESS);
+            Project.setTotalCost(costBreakdown.getTotalCost());
+            Project.setProjectStatus(ProjectStatus.INPROGRESS);
 
 
             ConsolePrinter.printCostDetails(costBreakdown);
@@ -131,11 +128,11 @@ public class MainView {
             String saveChoice = scanner.nextLine();
 
             if(saveChoice.equals("y")){
-                projetService.createProjetWithComponents(projet);
+                ProjectService.createprojectWithComponents(Project);
             }
 
-            DevisService devisService = new DevisService();
-            addDevisView(projet);
+            QuoteService QuoteService = new QuoteService();
+            addDevisView(Project);
 
 
         }else {
@@ -156,11 +153,11 @@ public class MainView {
         if(client.isPresent()){
             ConsolePrinter.printClient(client.get());
 
-            DevisService devisService = new DevisService();
-            List<Devis> devisList = devisService.getDevisWithProject(client.get());
+            QuoteService QuoteService = new QuoteService();
+            List<Quote> quotesList = QuoteService.getQuoteWithProject(client.get());
 
-            for(Devis devis : devisList){
-                ConsolePrinter.printDevis(devis);
+            for(Quote quotes : quotesList){
+                ConsolePrinter.printQuote(quotes);
             }
 
             System.out.print(" ==> Do you want to accept a devis? [y/n]: ");
@@ -168,19 +165,19 @@ public class MainView {
 
             if(saveChoice.equals("y")){
                 System.out.print(" ==> Enter Devis ID [To Accept]: ");
-                Integer devisId = scanner.nextInt();
+                Integer quoteId = scanner.nextInt();
                 scanner.nextLine();
 
-                Devis currentdevis = devisList.stream()
-                        .filter(devis -> Objects.equals(devis.getId(), devisId))
+                Quote currentquotes = quotesList.stream()
+                        .filter(quote -> Objects.equals(quote.getId(), quoteId))
                         .findFirst()
                         .orElse(null);
 
-                assert currentdevis != null;
-                if(!currentdevis.getAccepted()){
+                assert currentquotes != null;
+                if(!currentquotes.getAccepted()){
                     try {
-                        Devis returnedDevis = devisService.acceptDevis(currentdevis);
-                        ConsolePrinter.printSuccess("Devis Accepted Successfully: ID " + returnedDevis.getId());
+                        Quote returnedQuotes = QuoteService.acceptQuote(currentquotes);
+                        ConsolePrinter.printSuccess("Devis Accepted Successfully: ID " + returnedQuotes.getId());
                     } catch (Exception e){
                         ConsolePrinter.printError(e.getMessage());
                     }
@@ -196,7 +193,7 @@ public class MainView {
 
     }
 
-    static private Materiaux addMaterialsView(){
+    static private Material addMaterialsView(){
         System.out.print(" ==> Entre the name of the Material: ");
         String materialName = scanner.nextLine();
 
@@ -215,11 +212,11 @@ public class MainView {
         System.out.print(" ==> Add Material quality coefficient (1.0 = standard > 1.0 = high quality: ");
         Double coefficient = scanner.nextDouble();
 
-        return new Materiaux(materialName, taxRate, TypeComposant.MATERIEL, null,  unitCost, quanitity, transport, coefficient);
+        return new Material(materialName, taxRate, ComponentType.MATERIEL, null,  unitCost, quanitity, transport, coefficient);
 
     }
 
-    static private MainDoeuvre addLaborView(){
+    static private Labour addLaborView(){
         System.out.print(" ==> Entre the Type of the worker : ");
         String workerType = scanner.nextLine();
 
@@ -235,11 +232,11 @@ public class MainView {
         System.out.print(" ==> Add Labor Productivity factor (1.0 = standard > 1.0 = high quality: ");
         Double coefficient = scanner.nextDouble();
 
-        return new MainDoeuvre(workerType, taxRate, TypeComposant.MAINDOUVRE, null,  hourlyRate, worKHoursCount, coefficient);
+        return new Labour(workerType, taxRate, ComponentType.LABOR, null,  hourlyRate, worKHoursCount, coefficient);
 
     }
 
-    static private void addDevisView(Projet projet){
+    static private void addDevisView(Project Project){
         System.out.print(" ==> Do you want to Create Devis? [y/n]: ");
         String devisChoice = scanner.nextLine();
 
@@ -255,26 +252,26 @@ public class MainView {
             validity = scanner.nextLine();
         }
 
-        DevisService devisService = new DevisService();
-        Devis devis = new Devis(
+        QuoteService QuoteService = new QuoteService();
+        Quote quote = new Quote(
                 null,
-                projet.getTotalCost(),
+                Project.getTotalCost(),
                 LocalDate.parse(issueDate, formatter),
                 LocalDate.parse(validity, formatter),
                 Boolean.FALSE,
-                projet
+                Project
         );
 
-        ConsolePrinter.printDevis(devis);
-        devisService.createDevis(devis);
+        ConsolePrinter.printQuote(quote);
+        QuoteService.createQuote(quote);
 
     }
 
-    static private CostBreakdown calculateCost(List<Composants> composants) {
-        return composants.stream()
-                .map(composant -> {
-                    double baseCost = calculateBaseCost(composant);
-                    double taxAmount = baseCost * (composant.getTaxRate() / 100);
+    static private CostBreakdown calculateCost(List<Component> components) {
+        return components.stream()
+                .map(component -> {
+                    double baseCost = calculateBaseCost(component);
+                    double taxAmount = baseCost * (component.getTaxRate() / 100);
                     return new CostBreakdown(baseCost, taxAmount);
                 })
                 .reduce(new CostBreakdown(0, 0), (subtotal, element) -> new CostBreakdown(
@@ -283,16 +280,16 @@ public class MainView {
                 ));
     }
 
-    static private double calculateBaseCost(Composants composant) {
-        if (composant instanceof Materiaux materiaux) {
-            return materiaux.getUnitCost()
-                    * materiaux.getQuantity()
-                    * materiaux.getQualityCoefficient()
-                    + materiaux.getTransportCost();
-        } else if (composant instanceof MainDoeuvre mainDoeuvre) {
-            return mainDoeuvre.getHourlyRate()
-                    * mainDoeuvre.getWorkHoursCount()
-                    * mainDoeuvre.getProductivityRate();
+    static private double calculateBaseCost(Component component) {
+        if (component instanceof Material Material) {
+            return Material.getUnitCost()
+                    * Material.getQuantity()
+                    * Material.getQualityCoefficient()
+                    + Material.getTransportCost();
+        } else if (component instanceof Labour Labour) {
+            return Labour.getHourlyRate()
+                    * Labour.getWorkHoursCount()
+                    * Labour.getProductivityRate();
         }
         return 0.0; // or throw an exception for unknown component types
     }

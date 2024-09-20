@@ -1,54 +1,53 @@
-package Services;
+package service;
 
-import Entities.Client;
-import Entities.Devis;
-import repositories.Devis.DevisRepository;
-import repositories.Devis.DevisRepositoryImpl;
+import domain.entities.Client;
+import domain.entities.Quote;
+import repository.Interfaces.QuoteRepository;
+import repository.implimentation.QuoteRepositoryImpl;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-public class DevisService {
-    private final DevisRepository devisRepository;
+public class QuoteService {
+    private final QuoteRepository quoteRepository;
 
-    public
-    DevisService() {
-        this.devisRepository = new DevisRepositoryImpl();
+    public QuoteService() {
+        this.quoteRepository = new QuoteRepositoryImpl();
     }
 
-    public Devis createDevis(Devis devis) {
-        return devisRepository.save(devis);
+    public Quote createQuote(Quote quote) {
+        return quoteRepository.save(quote); // Call on the instance
     }
 
-    public Optional<Devis> getDevisById(Integer id) {
-        return devisRepository.findById(id);
+    public Optional<Quote> getQuoteById(Integer id) {
+        return quoteRepository.findById(id); // Call on the instance
     }
 
-    public List<Devis> getAllDevis() {
-        return devisRepository.findAll();
+    public List<Quote> getAllQuotes() {
+        return quoteRepository.findAll(); // Call on the instance
     }
 
-    public Devis updateDevis(Devis devis) {
-        return devisRepository.save(devis);
+    public Quote updateQuote(Quote quote) {
+        return quoteRepository.save(quote); // Call on the instance
     }
 
-    public void deleteDevis(Integer id) {
-        devisRepository.deleteById(id);
+    public void deleteQuote(Integer id) {
+        quoteRepository.deleteById(id); // Call on the instance
     }
 
-    public List<Devis> getDevisWithProject(Client client) {
-        return devisRepository.findDevisJoinProjectsById(client);
+    public List<Quote> getQuoteWithProject(Client client) {
+        return quoteRepository.findQuoteWithProjectById(client); // Call on the instance
     }
 
-    public Devis acceptDevis(Devis devis) throws Exception {
-        Devis newdevis  = new Devis();
-        boolean isPast = devis.getValidityDate().isAfter(LocalDate.now());
+    public Quote acceptQuote(Quote quote) throws Exception {
+        Quote newQuote = new Quote();
+        boolean isPast = quote.getValidityDate().isAfter(LocalDate.now());
 
-        if(isPast) {
-            newdevis.setAccepted(true);
-            newdevis.setId(devis.getId());
-            return devisRepository.update(newdevis);
+        if (isPast) {
+            newQuote.setAccepted(true);
+            newQuote.setId(quote.getId());
+            return quoteRepository.update(newQuote); // Call on the instance
         } else {
             throw new Exception("Invalid Date");
         }

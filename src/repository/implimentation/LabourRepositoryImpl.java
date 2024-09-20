@@ -1,22 +1,23 @@
-package repositories.MainDoeuvre;
+package repository.implimentation;
 
-import Config.DBConnection;
-import Entities.MainDoeuvre;
-import Enums.TypeComposant;
-import Utils.Mappers;
+
+import config.DBConnection;
+import domain.entities.Labour;
+import repository.Interfaces.LabourRepository;
+import utils.Mappers;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class MainDoeuvreRepositoryImpl implements MainDoeuvreRepository {
+public class LabourRepositoryImpl implements LabourRepository {
     private DBConnection dbConnection;
     private Connection connection = null;
 
     @Override
-    public MainDoeuvre save(MainDoeuvre mainDoeuvre) {
-        String sql = mainDoeuvre.getId() == null ?
+    public Labour save(Labour labour) {
+        String sql = labour.getId() == null ?
                 "INSERT INTO MainDœuvre (name, taxRate, hourlyRate, workHoursCount, productivityRate, project_id) VALUES (?, ?, ?, ?, ?, ?)" :
                 "UPDATE MainDœuvre SET name = ?, taxRate = ?, hourlyRate = ?, workHoursCount = ?, productivityRate = ? WHERE id = ?";
 
@@ -26,15 +27,15 @@ public class MainDoeuvreRepositoryImpl implements MainDoeuvreRepository {
                 connection = dbConnection.getConnection();
 
                 try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-                    stmt.setString(1, mainDoeuvre.getName());
-                    stmt.setDouble(2, mainDoeuvre.getTaxRate());
-                    stmt.setDouble(3, mainDoeuvre.getHourlyRate());
-                    stmt.setDouble(4, mainDoeuvre.getWorkHoursCount());
-                    stmt.setDouble(5, mainDoeuvre.getProductivityRate());
-                    stmt.setDouble(6, mainDoeuvre.getProjet().getId());
+                    stmt.setString(1, labour.getName());
+                    stmt.setDouble(2, labour.getTaxRate());
+                    stmt.setDouble(3, labour.getHourlyRate());
+                    stmt.setDouble(4, labour.getWorkHoursCount());
+                    stmt.setDouble(5, labour.getProductivityRate());
+                    stmt.setDouble(6, labour.getProject().getId());
 
-                    if (mainDoeuvre.getId() != null) {
-                        stmt.setInt(6, mainDoeuvre.getId());
+                    if (labour.getId() != null) {
+                        stmt.setInt(6, labour.getId());
                     }
 
                     int affectedRows = stmt.executeUpdate();
@@ -43,10 +44,10 @@ public class MainDoeuvreRepositoryImpl implements MainDoeuvreRepository {
                         throw new SQLException("Creating mainDoeuvre failed, no rows affected.");
                     }
 
-                    if (mainDoeuvre.getId() == null) {
+                    if (labour.getId() == null) {
                         try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
                             if (generatedKeys.next()) {
-                                mainDoeuvre.setId(generatedKeys.getInt(1));
+                                labour.setId(generatedKeys.getInt(1));
                             } else {
                                 throw new SQLException("Creating mainDoeuvre failed, no ID obtained.");
                             }
@@ -65,11 +66,11 @@ public class MainDoeuvreRepositoryImpl implements MainDoeuvreRepository {
         }
 
 
-        return mainDoeuvre;
+        return labour;
     }
 
     @Override
-    public Optional<MainDoeuvre> findById(Integer id) {
+    public Optional<Labour> findById(Integer id) {
         String sql = "SELECT * FROM MainDœuvre WHERE id = ?";
 
         try {
@@ -100,8 +101,8 @@ public class MainDoeuvreRepositoryImpl implements MainDoeuvreRepository {
     }
 
     @Override
-    public List<MainDoeuvre> findAll() {
-        List<MainDoeuvre> mainDoeuvreList = new ArrayList<>();
+    public List<Labour> findAll() {
+        List<Labour> labourList = new ArrayList<>();
         String sql = "SELECT * FROM MainDœuvre";
 
         try {
@@ -112,7 +113,7 @@ public class MainDoeuvreRepositoryImpl implements MainDoeuvreRepository {
                 try (Statement stmt = connection.createStatement();
                      ResultSet rs = stmt.executeQuery(sql)) {
                     while (rs.next()) {
-                        mainDoeuvreList.add(Mappers.mapResultSetToMainDœuvre(rs));
+                        labourList.add(Mappers.mapResultSetToMainDœuvre(rs));
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -127,7 +128,7 @@ public class MainDoeuvreRepositoryImpl implements MainDoeuvreRepository {
         }
 
 
-        return mainDoeuvreList;
+        return labourList;
     }
 
     @Override

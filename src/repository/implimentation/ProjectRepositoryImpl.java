@@ -1,21 +1,23 @@
-package repositories.Projet;
+package repository.implimentation;
 
-import Config.DBConnection;
-import Entities.Projet;
-import Utils.Mappers;
+
+import config.DBConnection;
+import domain.entities.Project;
+import repository.Interfaces.ProjectRepository;
+import utils.Mappers;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class ProjetRepositoryImpl implements ProjetRepository {
+public class ProjectRepositoryImpl implements ProjectRepository {
     DBConnection dbConnection = null;
     Connection connection = null;
 
     @Override
-    public Projet save(Projet projet) {
-        String sql = projet.getId() == null ?
+    public Project save(Project project) {
+        String sql = project.getId() == null ?
                 "INSERT INTO Projets (projectName, profit, totalCost, status, client_id, discount) VALUES (?, ?, ?, ?::projectstatus, ?, ?)" :
                 "UPDATE Projets SET projectName = ?, profit = ?, totalCost = ?, status = ?, client_id = ? WHERE id = ?";
 
@@ -25,15 +27,15 @@ public class ProjetRepositoryImpl implements ProjetRepository {
                 connection = dbConnection.getConnection();
 
                 try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-                    stmt.setString(1, projet.getProjectName());
-                    stmt.setDouble(2, projet.getProfit());
-                    stmt.setDouble(3, projet.getTotalCost());
-                    stmt.setString(4, projet.getProjectStatus().name());
-                    stmt.setInt(5, projet.getClient().getId());
-                    stmt.setDouble(6, projet.getDiscount());
+                    stmt.setString(1, project.getProjectName());
+                    stmt.setDouble(2, project.getProfit());
+                    stmt.setDouble(3, project.getTotalCost());
+                    stmt.setString(4, project.getProjectStatus().name());
+                    stmt.setInt(5, project.getClient().getId());
+                    stmt.setDouble(6, project.getDiscount());
 
-                    if (projet.getId() != null) {
-                        stmt.setInt(6, projet.getId());
+                    if (project.getId() != null) {
+                        stmt.setInt(6, project.getId());
                     }
 
                     int affectedRows = stmt.executeUpdate();
@@ -42,10 +44,10 @@ public class ProjetRepositoryImpl implements ProjetRepository {
                         throw new SQLException("Creating projet failed, no rows affected.");
                     }
 
-                    if (projet.getId() == null) {
+                    if (project.getId() == null) {
                         try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
                             if (generatedKeys.next()) {
-                                projet.setId(generatedKeys.getInt(1));
+                                project.setId(generatedKeys.getInt(1));
                             } else {
                                 throw new SQLException("Creating projet failed, no ID obtained.");
                             }
@@ -60,11 +62,11 @@ public class ProjetRepositoryImpl implements ProjetRepository {
                 dbConnection.closeConnection();
             }
         }
-        return projet;
+        return project;
     }
 
     @Override
-    public Optional<Projet> findById(Integer id) {
+    public Optional<Project> findById(Integer id) {
         String sql = "SELECT * FROM Projets WHERE id = ?";
         try {
             dbConnection = DBConnection.getInstance();
@@ -90,8 +92,8 @@ public class ProjetRepositoryImpl implements ProjetRepository {
     }
 
     @Override
-    public List<Projet> findAll() {
-        List<Projet> projetList = new ArrayList<>();
+    public List<Project> findAll() {
+        List<Project> projectList = new ArrayList<>();
         String sql = "SELECT * FROM Projets";
 
         try {
@@ -102,7 +104,7 @@ public class ProjetRepositoryImpl implements ProjetRepository {
                 try (Statement stmt = connection.createStatement();
                      ResultSet rs = stmt.executeQuery(sql)) {
                     while (rs.next()) {
-                        projetList.add(Mappers.mapResultSetToProjet(rs));
+                        projectList.add(Mappers.mapResultSetToProjet(rs));
                     }
                 }
             }
@@ -113,7 +115,7 @@ public class ProjetRepositoryImpl implements ProjetRepository {
                 dbConnection.closeConnection();
             }
         }
-        return projetList;
+        return projectList;
     }
 
     @Override

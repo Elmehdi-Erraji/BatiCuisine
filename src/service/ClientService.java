@@ -1,7 +1,8 @@
-package Services;
+package service;
 
-import Entities.Client;
-import repositories.Client.ClientRepository;
+
+import domain.entities.Client;
+import repository.Interfaces.ClientRepository;
 
 import java.util.List;
 import java.util.Optional;

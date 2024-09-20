@@ -2,18 +2,17 @@ package config;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class dbConnection {
-    private static dbConnection instance;
+public class DBConnection {
+    private static DBConnection instance;
     private final Connection connection;
 
     private static final String URL = "jdbc:postgresql://localhost:5432/batiCuisine";
     private static final String USER = "batiCuisine";
     private static final String PASSWORD = "";
 
-    private dbConnection() {
+    private DBConnection() {
         Connection tempConnection = null;
         try {
             tempConnection = DriverManager.getConnection(URL, USER, PASSWORD);
@@ -23,11 +22,11 @@ public class dbConnection {
         this.connection = tempConnection;
     }
 
-    public static dbConnection getInstance() throws SQLException {
+    public static DBConnection getInstance() throws SQLException {
         if (instance == null) {
-            instance = new dbConnection();
+            instance = new DBConnection();
         } else if (instance.getConnection().isClosed()) {
-            instance = new dbConnection();
+            instance = new DBConnection();
         }
         return instance;
     }

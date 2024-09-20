@@ -1,4 +1,4 @@
-package Utils.Types;
+package utils.Types;
 
 public class CostBreakdown {
     private double baseCost;

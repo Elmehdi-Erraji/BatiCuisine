@@ -1,36 +1,37 @@
-package Services;
+package service;
 
-import Entities.MainDoeuvre;
-import repositories.MainDoeuvre.MainDoeuvreRepository;
-import repositories.MainDoeuvre.MainDoeuvreRepositoryImpl;
+
+import domain.entities.Labour;
+import repository.Interfaces.LabourRepository;
+import repository.implimentation.LabourRepositoryImpl;
 
 import java.util.List;
 import java.util.Optional;
 
-public class MainDœuvreService {
-    private final MainDoeuvreRepository mainDoeuvreRepository;
+public class LabourService {
+    private final LabourRepository labourRepository;
 
-    public MainDœuvreService() {
-        this.mainDoeuvreRepository = new MainDoeuvreRepositoryImpl();
+    public LabourService() {
+        this.labourRepository = new LabourRepositoryImpl();
     }
 
-    public MainDoeuvre createMainDœuvre(MainDoeuvre mainDoeuvre) {
-        return mainDoeuvreRepository.save(mainDoeuvre);
+    public Labour createLabour(Labour labour) {
+        return labourRepository.save(labour);
     }
 
-    public Optional<MainDoeuvre> getMainDœuvreById(Integer id) {
-        return mainDoeuvreRepository.findById(id);
+    public Optional<Labour> getLabourById(Integer id) {
+        return labourRepository.findById(id);
     }
 
-    public List<MainDoeuvre> getAllMainDœuvre() {
-        return mainDoeuvreRepository.findAll();
+    public List<Labour> getAllLabours() {
+        return labourRepository.findAll();
     }
 
-    public MainDoeuvre updateMainDœuvre(MainDoeuvre mainDoeuvre) {
-        return mainDoeuvreRepository.save(mainDoeuvre);
+    public Labour updateLabour(Labour labour) {
+        return labourRepository.save(labour);
     }
 
-    public void deleteMainDœuvre(Integer id) {
-        mainDoeuvreRepository.deleteById(id);
+    public void deleteLabour(Integer id) {
+        labourRepository.deleteById(id);
     }
 }

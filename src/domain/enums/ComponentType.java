@@ -1,6 +1,5 @@
 package domain.enums;
 
 public enum ComponentType {
-    MATERIAL, LABOR
-
+    MATERIEL, LABOR
 }

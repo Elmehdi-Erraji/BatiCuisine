@@ -1,36 +1,36 @@
-package Services;
+package service;
 
-import Entities.Materiaux;
-import repositories.Materiaux.MateriauxRepository;
-import repositories.Materiaux.MateriauxRepositoryImpl;
+import domain.entities.Material;
+import repository.Interfaces.MaterialsRepository;
+import repository.implimentation.MaterialsRepositoryImpl;
 
 import java.util.List;
 import java.util.Optional;
 
-public class MateriauxService {
-    private final MateriauxRepository materiauxRepository;
+public class MaterialsService {
+    private final MaterialsRepository materialsRepository;
 
-    public MateriauxService() {
-        this.materiauxRepository = new MateriauxRepositoryImpl();
+    public MaterialsService() {
+        this.materialsRepository = new MaterialsRepositoryImpl();
     }
 
-    public Materiaux createMateriaux(Materiaux materiaux) {
-        return materiauxRepository.save(materiaux);
+    public Material createMaterial(Material material) {
+        return materialsRepository.save(material); // Call on the instance
     }
 
-    public Optional<Materiaux> getMateriauxById(Integer id) {
-        return materiauxRepository.findById(id);
+    public Optional<Material> getMaterialById(Integer id) {
+        return materialsRepository.findById(id); // Call on the instance
     }
 
-    public List<Materiaux> getAllMateriaux() {
-        return materiauxRepository.findAll();
+    public List<Material> getAllMaterials() {
+        return materialsRepository.findAll(); // Call on the instance
     }
 
-    public Materiaux updateMateriaux(Materiaux materiaux) {
-        return materiauxRepository.save(materiaux);
+    public Material updateMaterial(Material material) {
+        return materialsRepository.save(material); // Call on the instance
     }
 
-    public void deleteMateriaux(Integer id) {
-        materiauxRepository.deleteById(id);
+    public void deleteMaterial(Integer id) {
+        materialsRepository.deleteById(id); // Call on the instance
     }
 }

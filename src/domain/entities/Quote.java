@@ -1,5 +1,7 @@
 package domain.entities;
 
+import domain.entities.Project;
+
 import java.time.LocalDate;
 
 public class Quote {
@@ -18,8 +20,9 @@ public class Quote {
         this.accepted = accepted;
         this.project = project;
     }
+    public Quote() {
+    }
 
-    // Getters and setters
     public Integer getId() {
         return id;
     }
@@ -64,19 +67,7 @@ public class Quote {
         return project;
     }
 
-    public void setProject(Project project) {
-        this.project = project;
-    }
-
-    @Override
-    public String toString() {
-        return "Quote{" +
-                "id=" + id +
-                ", estimatedPrice=" + estimatedPrice +
-                ", issueDate=" + issueDate +
-                ", validityDate=" + validityDate +
-                ", accepted=" + accepted +
-                ", project=" + project +
-                '}';
+    public void setProject(Project Project) {
+        this.project = Project;
     }
 }
