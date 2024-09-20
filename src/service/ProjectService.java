@@ -1,12 +1,14 @@
 package service;
 
+
 import domain.entities.Component;
-import domain.entities.Material;
 import domain.entities.Labour;
+import domain.entities.Material;
 import domain.entities.Project;
 import repository.Interfaces.ProjectRepository;
+import service.LabourService;
+import service.MaterialsService;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,39 +23,45 @@ public class ProjectService {
         return projectRepository.save(project);
     }
 
-    public Project createProjectWithComponents(Project project) throws SQLException {
+    public Project createprojectWithComponents(Project project) {
         Project savedProject = projectRepository.save(project);
 
-        MaterialsService materialsService = new MaterialsService();
-        LabourService labourService = new LabourService();
+        MaterialsService materialsService =  new MaterialsService();
+        LabourService labourService =  new LabourService();
 
-        List<Component> components = project.getComponents();
+        List<Component> components =  project.getComponents();
 
         components.forEach(component -> {
-            component.setProject(savedProject);
             if (component instanceof Material material) {
+
+                component.setProject(savedProject);
                 materialsService.createMaterial(material);
+
             } else if (component instanceof Labour labour) {
+
+                component.setProject(savedProject);
                 labourService.createLabour(labour);
+
             }
         });
 
         return savedProject;
     }
 
-    public Optional<Project> getProjectById(Integer id) {
+
+    public Optional<Project> getprojectById(Integer id) {
         return projectRepository.findById(id);
     }
 
-    public List<Project> getAllProjects() {
+    public List<Project> getAllprojects() {
         return projectRepository.findAll();
     }
 
-    public Project updateProject(Project project) {
+    public Project updateproject(Project project) {
         return projectRepository.save(project);
     }
 
-    public void deleteProject(Integer id) {
+    public void deleteproject(Integer id) {
         projectRepository.deleteById(id);
     }
 }

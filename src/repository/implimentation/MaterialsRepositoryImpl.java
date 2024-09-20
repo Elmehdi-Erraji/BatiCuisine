@@ -1,9 +1,10 @@
 package repository.implimentation;
 
-import config.dbConnection;
+
+import config.DBConnection;
 import domain.entities.Material;
-import domain.enums.ComponentType;
 import repository.Interfaces.MaterialsRepository;
+import utils.Mappers;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -11,65 +12,90 @@ import java.util.List;
 import java.util.Optional;
 
 public class MaterialsRepositoryImpl implements MaterialsRepository {
-    private final Connection connection;
-
-    public MaterialsRepositoryImpl(Connection connection) {
-        this.connection = connection;
-    }
+    private DBConnection dbConnection;
+    private Connection connection = null;
 
     @Override
-    public Material save(Material material) {
-        String sql = material.getId() == null ?
-                "INSERT INTO material (name, taxrate, unitcost, quantity, transportcost, qualitycoefficient) VALUES (?, ?, ?, ?, ?, ?)" :
-                "UPDATE material SET name = ?, taxrate = ?, unitcost = ?, quantity = ?, transportcost = ?, qualitycoefficient = ? WHERE id = ?";
+    public Material save(Material materiau) {
+        String sql = materiau.getId() == null ?
+                "INSERT INTO Materiaux (name, taxRate, unitCost, quantity, transportCost, qualityCoefficient, project_id) VALUES (?, ?, ?, ?, ?, ?, ?)" :
+                "UPDATE Materiaux SET name = ?, taxRate = ?, unitCost = ?, quantity = ?, transportCost = ?, qualityCoefficient = ? WHERE id = ?";
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setString(1, material.getName());
-            stmt.setDouble(2, material.getTaxRate());
-            stmt.setDouble(3, material.getUnitCost());
-            stmt.setDouble(4, material.getQuantity());
-            stmt.setDouble(5, material.getTransportCost());
-            stmt.setDouble(6, material.getQualityCoefficient());
+        try {
+            dbConnection = DBConnection.getInstance();
+            if (dbConnection != null) {
+                connection = dbConnection.getConnection();
 
-            if (material.getId() != null) {
-                stmt.setInt(7, material.getId());
-            }
+                try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                    stmt.setString(1, materiau.getName());
+                    stmt.setDouble(2, materiau.getTaxRate());
+                    stmt.setDouble(3, materiau.getUnitCost());
+                    stmt.setDouble(4, materiau.getQuantity());
+                    stmt.setDouble(5, materiau.getTransportCost());
+                    stmt.setDouble(6, materiau.getQualityCoefficient());
+                    stmt.setDouble(7, materiau.getProject().getId());
 
-            int affectedRows = stmt.executeUpdate();
 
-            if (affectedRows == 0) {
-                throw new SQLException("Creating material failed, no rows affected.");
-            }
+                    if (materiau.getId() != null) {
+                        stmt.setInt(7, materiau.getId());
+                    }
 
-            if (material.getId() == null) {
-                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-                    if (generatedKeys.next()) {
-                        material.setId(generatedKeys.getInt(1));
-                    } else {
-                        throw new SQLException("Creating material failed, no ID obtained.");
+                    int affectedRows = stmt.executeUpdate();
+
+                    if (affectedRows == 0) {
+                        throw new SQLException("Creating materiau failed, no rows affected.");
+                    }
+
+                    if (materiau.getId() == null) {
+                        try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                            if (generatedKeys.next()) {
+                                materiau.setId(generatedKeys.getInt(1));
+                            } else {
+                                throw new SQLException("Creating materiau failed, no ID obtained.");
+                            }
+                        }
+                    }
+
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }  finally {
+                    if (dbConnection != null) {
+                        dbConnection.closeConnection();
                     }
                 }
             }
-
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
-        return material;
+        return materiau;
     }
 
     @Override
     public Optional<Material> findById(Integer id) {
-        String sql = "SELECT * FROM material WHERE id = ?";
+        String sql = "SELECT * FROM Materiaux WHERE id = ?";
 
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setInt(1, id);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                return Optional.of(mapResultSetToMaterial(rs));
+        try {
+            dbConnection = DBConnection.getInstance();
+            if (dbConnection != null) {
+                connection = dbConnection.getConnection();
+
+                try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+                    pstmt.setInt(1, id);
+                    ResultSet rs = pstmt.executeQuery();
+                    if (rs.next()) {
+                        return Optional.of(Mappers.mapResultSetToMateriaux(rs));
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
+        } finally {
+            if (dbConnection != null) {
+                dbConnection.closeConnection();
+            }
         }
 
         return Optional.empty();
@@ -77,43 +103,62 @@ public class MaterialsRepositoryImpl implements MaterialsRepository {
 
     @Override
     public List<Material> findAll() {
-        List<Material> materialsList = new ArrayList<>();
-        String sql = "SELECT * FROM material";
+        List<Material> materialList = new ArrayList<>();
+        String sql = "SELECT * FROM Materiaux";
 
-        try (Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                materialsList.add(mapResultSetToMaterial(rs));
+        try {
+            dbConnection = DBConnection.getInstance();
+            if (dbConnection != null) {
+                connection = dbConnection.getConnection();
+
+                try (Statement stmt = connection.createStatement();
+                     ResultSet rs = stmt.executeQuery(sql)) {
+                    while (rs.next()) {
+                        materialList.add(Mappers.mapResultSetToMateriaux(rs));
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
+        } finally {
+            if (dbConnection != null) {
+                dbConnection.closeConnection();
+            }
         }
 
-        return materialsList;
+
+
+        return materialList;
     }
 
     @Override
     public void deleteById(Integer id) {
-        String sql = "DELETE FROM material WHERE id = ?";
+        String sql = "DELETE FROM Materiaux WHERE id = ?";
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, id);
-            stmt.executeUpdate();
+        try {
+            dbConnection = DBConnection.getInstance();
+            if (dbConnection != null) {
+                connection = dbConnection.getConnection();
+
+                try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+                    stmt.setInt(1, id);
+                    stmt.executeUpdate();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
+        } finally {
+            if (dbConnection != null) {
+                dbConnection.closeConnection();
+            }
         }
+
+
     }
 
-    private Material mapResultSetToMaterial(ResultSet rs) throws SQLException {
-        return new Material(
-                rs.getString("name"),
-                rs.getDouble("taxRate"),
-                rs.getInt("id"),
-                ComponentType.MATERIAL,
-                rs.getDouble("unitCost"),
-                rs.getDouble("quantity"),
-                rs.getDouble("transportCost"),
-                rs.getDouble("qualityCoefficient")
-        );
-    }
 }
+

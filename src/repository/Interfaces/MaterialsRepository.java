@@ -11,3 +11,4 @@ public interface MaterialsRepository {
     List<Material> findAll();
     void deleteById(Integer id);
 }
+

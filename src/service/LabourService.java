@@ -1,21 +1,18 @@
 package service;
 
-import config.dbConnection;
+
 import domain.entities.Labour;
-import repository.Interfaces.LaborRepository;
+import repository.Interfaces.LabourRepository;
 import repository.implimentation.LabourRepositoryImpl;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
 public class LabourService {
-    private final LaborRepository labourRepository;
+    private final LabourRepository labourRepository;
 
-    public LabourService() throws SQLException {
-        Connection connection = config.dbConnection.getInstance().getConnection();
-        this.labourRepository = new LabourRepositoryImpl(connection);
+    public LabourService() {
+        this.labourRepository = new LabourRepositoryImpl();
     }
 
     public Labour createLabour(Labour labour) {
@@ -26,7 +23,7 @@ public class LabourService {
         return labourRepository.findById(id);
     }
 
-    public List<Labour> getAllLabour() {
+    public List<Labour> getAllLabours() {
         return labourRepository.findAll();
     }
 

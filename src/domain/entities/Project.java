@@ -7,18 +7,20 @@ import java.util.List;
 
 public class Project {
     private Integer id;
-    private String name;
-    private Double profitMargin;
+    private String projectName;
+    private Double profit;
     private Double totalCost;
-    private ProjectStatus projectStatus;
+    private Double discount;
+    private ProjectStatus projectStatus;//status
     private Client client;
-    private List<Component> components;
+    List<Component> components;
 
-    public Project(Integer id, String name, double profitMargin, Double totalCost, ProjectStatus projectStatus) {
+    public Project(Integer id, String projectName, Double profit, Double totalCost, Double discount, ProjectStatus projectStatus) {
         this.id = id;
-        this.name = name;
-        this.profitMargin = profitMargin;
-        this.totalCost = 0.0;
+        this.projectName = projectName;
+        this.profit = profit;
+        this.totalCost = totalCost;
+        this.discount = discount;
         this.projectStatus = projectStatus;
         this.client = null;
         this.components = new ArrayList<>();
@@ -27,8 +29,6 @@ public class Project {
     public Project() {
     }
 
-
-    // Getters and Setters
     public Integer getId() {
         return id;
     }
@@ -37,20 +37,20 @@ public class Project {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getProjectName() {
+        return projectName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
     }
 
-    public double getProfitMargin() {
-        return profitMargin;
+    public Double getProfit() {
+        return profit;
     }
 
-    public void setProfitMargin(double profitMargin) {
-        this.profitMargin = profitMargin;
+    public void setProfit(Double profit) {
+        this.profit = profit;
     }
 
     public Double getTotalCost() {
@@ -70,11 +70,11 @@ public class Project {
     }
 
     public Client getClient() {
-        return client; // Changed from User to Client
+        return client;
     }
 
     public void setClient(Client client) {
-        this.client = client; // Changed from User to Client
+        this.client = client;
     }
 
     public List<Component> getComponents() {
@@ -85,18 +85,11 @@ public class Project {
         this.components = components;
     }
 
+    public Double getDiscount() {
+        return discount;
+    }
 
-
-    @Override
-    public String toString() {
-        return "Project{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", profitMargin=" + profitMargin +
-                ", totalCost=" + totalCost +
-                ", projectStatus=" + projectStatus +
-                ", client=" + client + // Changed from User to Client
-                ", components=" + components +
-                '}';
+    public void setDiscount(Double discount) {
+        this.discount = discount;
     }
 }

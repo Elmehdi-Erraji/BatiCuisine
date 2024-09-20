@@ -1,74 +1,101 @@
 package repository.implimentation;
 
-import config.dbConnection;
+
+import config.DBConnection;
 import domain.entities.Labour;
-import domain.enums.ComponentType;
-import repository.Interfaces.LaborRepository;
+import repository.Interfaces.LabourRepository;
+import utils.Mappers;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class LabourRepositoryImpl implements LaborRepository {
-    private final Connection connection;
-
-    public LabourRepositoryImpl(Connection connection) {
-        this.connection = connection;
-    }
+public class LabourRepositoryImpl implements LabourRepository {
+    private DBConnection dbConnection;
+    private Connection connection = null;
 
     @Override
     public Labour save(Labour labour) {
         String sql = labour.getId() == null ?
-                "INSERT INTO labours (name, taxrate, hourlyrate, workhourscount, productivityrate) VALUES (?, ?, ?, ?, ?)" :
-                "UPDATE labours SET name = ?, taxrate = ?, hourlyrate = ?, workhourscount = ?, productivityrate = ? WHERE id = ?";
+                "INSERT INTO MainDœuvre (name, taxRate, hourlyRate, workHoursCount, productivityRate, project_id) VALUES (?, ?, ?, ?, ?, ?)" :
+                "UPDATE MainDœuvre SET name = ?, taxRate = ?, hourlyRate = ?, workHoursCount = ?, productivityRate = ? WHERE id = ?";
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setString(1, labour.getName());
-            stmt.setDouble(2, labour.getTaxRate());
-            stmt.setDouble(3, labour.getHourlyRate());
-            stmt.setDouble(4, labour.getWorkHoursCount());
-            stmt.setDouble(5, labour.getProductivityRate());
+        try {
+            dbConnection = DBConnection.getInstance();
+            if (dbConnection != null) {
+                connection = dbConnection.getConnection();
 
-            if (labour.getId() != null) {
-                stmt.setInt(6, labour.getId());
-            }
+                try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                    stmt.setString(1, labour.getName());
+                    stmt.setDouble(2, labour.getTaxRate());
+                    stmt.setDouble(3, labour.getHourlyRate());
+                    stmt.setDouble(4, labour.getWorkHoursCount());
+                    stmt.setDouble(5, labour.getProductivityRate());
+                    stmt.setDouble(6, labour.getProject().getId());
 
-            int affectedRows = stmt.executeUpdate();
-
-            if (affectedRows == 0) {
-                throw new SQLException("Creating labour failed, no rows affected.");
-            }
-
-            if (labour.getId() == null) {
-                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-                    if (generatedKeys.next()) {
-                        labour.setId(generatedKeys.getInt(1));
-                    } else {
-                        throw new SQLException("Creating labour failed, no ID obtained.");
+                    if (labour.getId() != null) {
+                        stmt.setInt(6, labour.getId());
                     }
+
+                    int affectedRows = stmt.executeUpdate();
+
+                    if (affectedRows == 0) {
+                        throw new SQLException("Creating mainDoeuvre failed, no rows affected.");
+                    }
+
+                    if (labour.getId() == null) {
+                        try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                            if (generatedKeys.next()) {
+                                labour.setId(generatedKeys.getInt(1));
+                            } else {
+                                throw new SQLException("Creating mainDoeuvre failed, no ID obtained.");
+                            }
+                        }
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
+        } finally {
+            if (dbConnection != null) {
+                dbConnection.closeConnection();
+            }
         }
+
 
         return labour;
     }
 
     @Override
     public Optional<Labour> findById(Integer id) {
-        String sql = "SELECT * FROM labours WHERE id = ?";
+        String sql = "SELECT * FROM MainDœuvre WHERE id = ?";
 
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setInt(1, id);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                return Optional.of(mapResultSetToLabour(rs));
+        try {
+            dbConnection = DBConnection.getInstance();
+            if (dbConnection != null) {
+                connection = dbConnection.getConnection();
+
+                try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+                    pstmt.setInt(1, id);
+                    ResultSet rs = pstmt.executeQuery();
+                    if (rs.next()) {
+                        return Optional.of(Mappers.mapResultSetToMainDœuvre(rs));
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
+        } finally {
+            if (dbConnection != null) {
+                dbConnection.closeConnection();
+            }
         }
+
 
         return Optional.empty();
     }
@@ -76,44 +103,58 @@ public class LabourRepositoryImpl implements LaborRepository {
     @Override
     public List<Labour> findAll() {
         List<Labour> labourList = new ArrayList<>();
-        String sql = "SELECT * FROM labours";
+        String sql = "SELECT * FROM MainDœuvre";
 
-        try (Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                labourList.add(mapResultSetToLabour(rs));
+        try {
+            dbConnection = DBConnection.getInstance();
+            if (dbConnection != null) {
+                connection = dbConnection.getConnection();
+
+                try (Statement stmt = connection.createStatement();
+                     ResultSet rs = stmt.executeQuery(sql)) {
+                    while (rs.next()) {
+                        labourList.add(Mappers.mapResultSetToMainDœuvre(rs));
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
+        } finally {
+            if (dbConnection != null) {
+                dbConnection.closeConnection();
+            }
         }
+
 
         return labourList;
     }
 
     @Override
     public void deleteById(Integer id) {
-        String sql = "DELETE FROM labours WHERE id = ?";  // Updated table name to 'labours'
+        String sql = "DELETE FROM MainDœuvre WHERE id = ?";
 
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setInt(1, id);
-            pstmt.executeUpdate();
+        try {
+            dbConnection = DBConnection.getInstance();
+            if (dbConnection != null) {
+                connection = dbConnection.getConnection();
+                try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+                    pstmt.setInt(1, id);
+                    pstmt.executeUpdate();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
+        } finally {
+            if (dbConnection != null) {
+                dbConnection.closeConnection();
+            }
         }
+
     }
 
-    private Labour mapResultSetToLabour(ResultSet rs) throws SQLException {
-        return new Labour(
-                rs.getString("name"),
-                rs.getDouble("taxRate"),
-                rs.getInt("id"),
-                ComponentType.LABOR,
-                rs.getDouble("hourlyRate"),
-                rs.getDouble("workHoursCount"),
-                rs.getDouble("productivityRate")
-        );
-    }
+
 }
-
-
-   

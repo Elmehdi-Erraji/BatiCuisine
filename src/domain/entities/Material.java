@@ -1,17 +1,18 @@
 package domain.entities;
 
+import domain.entities.Component;
 import domain.enums.ComponentType;
+
 
 public class Material extends Component {
     private Integer id;
-    private ComponentType componentType;
     private Double unitCost;
     private Double quantity;
     private Double transportCost;
     private Double qualityCoefficient;
 
-    public Material(String name, Double taxRate, Integer id, ComponentType componentType, Double unitCost, Double quantity, Double transportCost, Double qualityCoefficient) {
-        super(name, taxRate,componentType);
+    public Material(String name, Double taxRate, ComponentType componentType, Integer id, Double unitCost, Double quantity, Double transportCost, Double qualityCoefficient) {
+        super(name, taxRate, componentType);
         this.id = id;
         this.unitCost = unitCost;
         this.quantity = quantity;
@@ -19,23 +20,12 @@ public class Material extends Component {
         this.qualityCoefficient = qualityCoefficient;
     }
 
-
-
-    // Getters and setters
     public Integer getId() {
         return id;
     }
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public ComponentType getComponentType() {
-        return componentType;
-    }
-
-    public void setComponentType(ComponentType componentType) {
-        this.componentType = componentType;
     }
 
     public Double getUnitCost() {
@@ -68,17 +58,5 @@ public class Material extends Component {
 
     public void setQualityCoefficient(Double qualityCoefficient) {
         this.qualityCoefficient = qualityCoefficient;
-    }
-
-    @Override
-    public String toString() {
-        return "Material{" +
-                "id=" + id +
-                ", componentType=" + componentType +
-                ", unitCost=" + unitCost +
-                ", quantity=" + quantity +
-                ", transportCost=" + transportCost +
-                ", qualityCoefficient=" + qualityCoefficient +
-                '}';
     }
 }

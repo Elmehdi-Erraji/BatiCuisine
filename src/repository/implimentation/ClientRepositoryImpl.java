@@ -1,117 +1,173 @@
 package repository.implimentation;
 
-import config.dbConnection;
+
+import config.DBConnection;
 import domain.entities.Client;
-import repository.Interfaces.CrudRepository;
+import repository.Interfaces.ClientRepository;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class ClientRepositoryImpl implements CrudRepository<Client, Integer> {
-    private final Connection connection;
+import utils.Mappers;
 
-    public ClientRepositoryImpl(Connection connection) {
-        this.connection = connection;
-    }
+public class ClientRepositoryImpl implements ClientRepository {
+    DBConnection dbConnection = null;
+    Connection connection = null;
 
     @Override
-    public Optional<Client> create(Client client) {
-        try {
-            String sql = "INSERT INTO clients (name, address, phone, isProfessional) VALUES (?, ?, ?, ?)";
-            PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            statement.setString(1, client.getName());
-            statement.setString(2, client.getAddress());
-            statement.setString(3, client.getPhone());
-            statement.setBoolean(4, client.isProfessional());
-            int affectedRows = statement.executeUpdate();
+    public Client save(Client client) {
+        String sql = client.getId() == null ?
+                "INSERT INTO Clients (name, address, phoneNumber, isProfessional) VALUES (?, ?, ?, ?)" :
+                "UPDATE Clients SET name = ?, address = ?, phoneNumber = ?, isProfessional = ? WHERE id = ?";
 
-            if (affectedRows > 0) {
-                ResultSet generatedKeys = statement.getGeneratedKeys();
-                if (generatedKeys.next()) {
-                    client.setId(generatedKeys.getInt(1));
-                    return Optional.of(client);
+        try {
+            dbConnection = DBConnection.getInstance();
+            if (dbConnection != null) {
+                connection = dbConnection.getConnection();
+
+                try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                    stmt.setString(1, client.getName());
+                    stmt.setString(2, client.getAddress());
+                    stmt.setString(3, client.getPhone());
+                    stmt.setBoolean(4, client.getProfessional());
+
+                    if (client.getId() != null) {
+                        stmt.setInt(5, client.getId());
+                    }
+
+                    int affectedRows = stmt.executeUpdate();
+
+                    if (affectedRows == 0) {
+                        throw new SQLException("Creating client failed, no rows affected.");
+                    }
+
+                    if (client.getId() == null) {
+                        try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                            if (generatedKeys.next()) {
+                                client.setId(generatedKeys.getInt(1));
+                            } else {
+                                throw new SQLException("Creating client failed, no ID obtained.");
+                            }
+                        }
+                    }
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
+        } finally {
+            if (dbConnection != null) {
+                dbConnection.closeConnection();
+            }
         }
-        return Optional.empty();
+        return client;
     }
 
     @Override
     public Optional<Client> findById(Integer id) {
-        Client client = null;
+        String sql = "SELECT * FROM Clients WHERE id = ?";
+
         try {
-            String sql = "SELECT * FROM clients WHERE id = ?";
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, id);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                String name = resultSet.getString("name");
-                String address = resultSet.getString("address");
-                String phone = resultSet.getString("phone");
-                boolean isProfessional = resultSet.getBoolean("isProfessional");
-                client = new Client(id, name, address, phone, isProfessional);
+            dbConnection = DBConnection.getInstance();
+            if (dbConnection != null) {
+                connection = dbConnection.getConnection();
+
+                try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+                    stmt.setInt(1, id);
+                    ResultSet rs = stmt.executeQuery();
+                    if (rs.next()) {
+                        return Optional.of(Mappers.mapResultSetToClient(rs));
+                    }
+                }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return Optional.ofNullable(client);
-    }
-
-    @Override
-    public List<Client> findAll() {
-        List<Client> clients = new ArrayList<>();
-        try {
-            String sql = "SELECT * FROM clients";
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(sql);
-            while (resultSet.next()) {
-                int id = resultSet.getInt("id");
-                String name = resultSet.getString("name");
-                String address = resultSet.getString("address");
-                String phone = resultSet.getString("phone");
-                boolean isProfessional = resultSet.getBoolean("isProfessional");
-                clients.add(new Client(id, name, address, phone, isProfessional));
+            throw new RuntimeException(e);
+        } finally {
+            if (dbConnection != null) {
+                dbConnection.closeConnection();
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return clients;
-    }
-
-    @Override
-    public Optional<Client> update(Client client) {
-        try {
-            String sql = "UPDATE clients SET name = ?, address = ?, phone = ?, isProfessional = ? WHERE id = ?";
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setString(1, client.getName());
-            statement.setString(2, client.getAddress());
-            statement.setString(3, client.getPhone());
-            statement.setBoolean(4, client.isProfessional());
-            statement.setInt(5, client.getId());
-            int affectedRows = statement.executeUpdate();
-
-            if (affectedRows > 0) {
-                return Optional.of(client);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
         return Optional.empty();
     }
 
     @Override
-    public void delete(Integer id) {
+    public List<Client> findAll() {
+        List<Client> clientList = new ArrayList<>();
+        String sql = "SELECT * FROM Clients";
+
+
         try {
-            String sql = "DELETE FROM clients WHERE id = ?";
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, id);
-            statement.executeUpdate();
+            dbConnection = DBConnection.getInstance();
+            if (dbConnection != null) {
+                connection = dbConnection.getConnection();
+
+                try (Statement stmt = connection.createStatement();
+                     ResultSet rs = stmt.executeQuery(sql)) {
+                    while (rs.next()) {
+                        clientList.add(Mappers.mapResultSetToClient(rs));
+                    }
+                }
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
+        } finally {
+            if (dbConnection != null) {
+                dbConnection.closeConnection();
+            }
+        }
+        return clientList;
+    }
+
+    @Override
+    public void deleteById(Integer id) {
+        String sql = "DELETE FROM Clients WHERE id = ?";
+
+        try {
+            dbConnection = DBConnection.getInstance();
+            if (dbConnection != null) {
+                connection = dbConnection.getConnection();
+
+                try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+                    stmt.setInt(1, id);
+                    stmt.executeUpdate();
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (dbConnection != null) {
+                dbConnection.closeConnection();
+            }
         }
     }
+
+    @Override
+    public List<Client> findByProfessional(Boolean isProfessional) {
+        List<Client> clientList = new ArrayList<>();
+        String sql = "SELECT * FROM Clients WHERE isProfessional = ?";
+
+        try {
+            dbConnection = DBConnection.getInstance();
+            if (dbConnection != null) {
+                connection = dbConnection.getConnection();
+
+                try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+                    stmt.setBoolean(1, isProfessional);
+                    ResultSet rs = stmt.executeQuery();
+                    while (rs.next()) {
+                        clientList.add(Mappers.mapResultSetToClient(rs));
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (dbConnection != null) {
+                dbConnection.closeConnection();
+            }
+        }
+        return clientList;
+    }
+
 }
