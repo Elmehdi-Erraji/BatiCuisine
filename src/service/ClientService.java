@@ -1,23 +1,23 @@
-package service;
+package Services;
 
-import domain.entities.Client;
-import repository.Interfaces.CrudRepository;
+import Entities.Client;
+import repositories.Client.ClientRepository;
 
 import java.util.List;
 import java.util.Optional;
 
 public class ClientService {
-    private final CrudRepository<Client, Integer> clientRepository;
+    private final ClientRepository clientRepository;
 
-    public ClientService(CrudRepository<Client, Integer> clientRepository) {
+    public ClientService(ClientRepository clientRepository) {
         this.clientRepository = clientRepository;
     }
 
-    public Optional<Client> addClient(Client client) {
-        return clientRepository.create(client);
+    public Client createClient(Client client) {
+        return clientRepository.save(client);
     }
 
-    public Optional<Client> getClientById(int id) {
+    public Optional<Client> getClientById(Integer id) {
         return clientRepository.findById(id);
     }
 
@@ -25,11 +25,19 @@ public class ClientService {
         return clientRepository.findAll();
     }
 
-    public Optional<Client> updateClient(Client client) {
-        return clientRepository.update(client);
+    public Client updateClient(Client client) {
+        return clientRepository.save(client);
     }
 
-    public void deleteClient(int id) {
-        clientRepository.delete(id);
+    public void deleteClient(Integer id) {
+        clientRepository.deleteById(id);
+    }
+
+    public List<Client> getProfessionalClients() {
+        return clientRepository.findByProfessional(true);
+    }
+
+    public List<Client> getNonProfessionalClients() {
+        return clientRepository.findByProfessional(false);
     }
 }

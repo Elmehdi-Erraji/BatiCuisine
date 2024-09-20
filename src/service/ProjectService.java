@@ -1,59 +1,64 @@
-package service;
+package Services;
 
-import domain.entities.Component;
-import domain.entities.Material;
-import domain.entities.Labour;
-import domain.entities.Project;
-import repository.Interfaces.ProjectRepository;
+import Entities.Composants;
+import Entities.MainDoeuvre;
+import Entities.Materiaux;
+import Entities.Projet;
+import repositories.Projet.ProjetRepository;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
-public class ProjectService {
-    private final ProjectRepository projectRepository;
+public class ProjetService {
+    private final ProjetRepository projetRepository;
 
-    public ProjectService(ProjectRepository projectRepository) {
-        this.projectRepository = projectRepository;
+    public ProjetService(ProjetRepository projetRepository) {
+        this.projetRepository = projetRepository;
     }
 
-    public Project createProject(Project project) {
-        return projectRepository.save(project);
+    public Projet createProjet(Projet projet) {
+        return projetRepository.save(projet);
     }
 
-    public Project createProjectWithComponents(Project project) throws SQLException {
-        Project savedProject = projectRepository.save(project);
+    public Projet createProjetWithComponents(Projet projet) {
+        Projet savedProjet = projetRepository.save(projet);
 
-        MaterialsService materialsService = new MaterialsService();
-        LabourService labourService = new LabourService();
+        MateriauxService materiauxService =  new MateriauxService();
+        MainDœuvreService mainDœuvreService =  new MainDœuvreService();
 
-        List<Component> components = project.getComponents();
+        List<Composants> composants =  projet.getComposants();
 
-        components.forEach(component -> {
-            component.setProject(savedProject);
-            if (component instanceof Material material) {
-                materialsService.createMaterial(material);
-            } else if (component instanceof Labour labour) {
-                labourService.createLabour(labour);
+        composants.forEach(composant -> {
+            if (composant instanceof Materiaux materiaux) {
+
+                composant.setProjet(savedProjet);
+                materiauxService.createMateriaux(materiaux);
+
+            } else if (composant instanceof MainDoeuvre mainDoeuvre) {
+
+                composant.setProjet(savedProjet);
+                mainDœuvreService.createMainDœuvre(mainDoeuvre);
+
             }
         });
 
-        return savedProject;
+        return savedProjet;
     }
 
-    public Optional<Project> getProjectById(Integer id) {
-        return projectRepository.findById(id);
+
+    public Optional<Projet> getProjetById(Integer id) {
+        return projetRepository.findById(id);
     }
 
-    public List<Project> getAllProjects() {
-        return projectRepository.findAll();
+    public List<Projet> getAllProjets() {
+        return projetRepository.findAll();
     }
 
-    public Project updateProject(Project project) {
-        return projectRepository.save(project);
+    public Projet updateProjet(Projet projet) {
+        return projetRepository.save(projet);
     }
 
-    public void deleteProject(Integer id) {
-        projectRepository.deleteById(id);
+    public void deleteProjet(Integer id) {
+        projetRepository.deleteById(id);
     }
 }

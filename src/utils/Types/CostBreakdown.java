@@ -1,10 +1,11 @@
-package utils.Types;
+package Utils.Types;
 
 public class CostBreakdown {
     private double baseCost;
     private double taxAmount;
     private double totalCost;
     private double profit;
+    private double discount;
 
     public CostBreakdown(double baseCost, double taxAmount) {
         this.baseCost = baseCost;
@@ -16,7 +17,7 @@ public class CostBreakdown {
     // Getters
     public double getBaseCost() { return baseCost; }
     public double getTaxAmount() { return taxAmount; }
-    public double getTotalCost() { return baseCost + taxAmount + profit; }
+    public double getTotalCost() { return (baseCost + taxAmount + profit) - discount; }
 
     public double getProfit() {
         return profit;
@@ -26,5 +27,11 @@ public class CostBreakdown {
         this.profit = profit;
     }
 
+    public double getDiscount() {
+        return discount;
+    }
 
+    public void setDiscount(double discount) {
+        this.discount = discount;
+    }
 }
