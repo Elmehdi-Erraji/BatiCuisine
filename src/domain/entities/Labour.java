@@ -18,6 +18,7 @@ public class Labour extends Component {
         this.productivityRate = productivityRate;
     }
 
+    // Getters and setters
     public Integer getId() {
         return id;
     }
@@ -58,5 +59,14 @@ public class Labour extends Component {
         this.productivityRate = productivityRate;
     }
 
-
+    @Override
+    public String toString() {
+        return "Labour{" +
+                "id=" + id +
+                ", componentType=" + componentType +
+                ", hourlyRate=" + hourlyRate +
+                ", workHoursCount=" + workHoursCount +
+                ", productivityRate=" + productivityRate +
+                '}';
+    }
 }

@@ -6,33 +6,36 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Project {
-    private int id;
+    private Integer id;
     private String name;
-    private double profitMargin;
+    private Double profitMargin;
     private Double totalCost;
     private ProjectStatus projectStatus;
-    private User user;
+    private Client client;
     private List<Component> components;
 
-    public Project(String name, double profitMargin, Double totalCost, ProjectStatus projectStatus, User user, List<Component> components) {
+    public Project(Integer id, String name, double profitMargin, Double totalCost, ProjectStatus projectStatus) {
+        this.id = id;
         this.name = name;
         this.profitMargin = profitMargin;
         this.totalCost = totalCost;
         this.projectStatus = projectStatus;
-        this.user = user;
-        this.components = components;
+        this.client = null;
+        this.components = new ArrayList<>();
     }
 
     public Project() {
-
     }
 
+
+
+
     // Getters and Setters
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -68,12 +71,12 @@ public class Project {
         this.projectStatus = projectStatus;
     }
 
-    public User getUser() {
-        return user;
+    public Client getClient() {
+        return client; // Changed from User to Client
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setClient(Client client) {
+        this.client = client; // Changed from User to Client
     }
 
     public List<Component> getComponents() {
@@ -84,6 +87,8 @@ public class Project {
         this.components = components;
     }
 
+
+
     @Override
     public String toString() {
         return "Project{" +
@@ -92,8 +97,8 @@ public class Project {
                 ", profitMargin=" + profitMargin +
                 ", totalCost=" + totalCost +
                 ", projectStatus=" + projectStatus +
-                ", user=" + user +
-                ", components=" + components + // Include components in toString
+                ", client=" + client + // Changed from User to Client
+                ", components=" + components +
                 '}';
     }
 }

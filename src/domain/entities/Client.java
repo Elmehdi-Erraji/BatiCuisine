@@ -1,26 +1,27 @@
 package domain.entities;
 
-import javax.swing.plaf.multi.MultiSeparatorUI;
+import java.util.ArrayList;
 import java.util.List;
 
-public class User {
+public class Client {
     private int id;
     private String name;
     private String address;
     private String phone;
     private boolean isProfessional;
-    private List<Project> projects;
+    private List<Project> projects; // One-to-Many relationship with Project
 
-
-    public User(int id, String name, String address, String phone, boolean isProfessional) {
+    public Client(int id, String name, String address, String phone, boolean isProfessional) {
         this.id = id;
         this.name = name;
         this.address = address;
         this.phone = phone;
         this.isProfessional = isProfessional;
-        this.projects = null;
+        this.projects = new ArrayList<>();
     }
-    public User(){
+
+    public Client() {
+        this.projects = new ArrayList<>();
     }
 
     public int getId() {
@@ -71,22 +72,19 @@ public class User {
         this.projects = projects;
     }
 
-    // Methods to add a project to the user
     public void addProject(Project project) {
-        if (this.projects != null) {
-            this.projects.add(project);
-        }
+        this.projects.add(project);
     }
+
     @Override
     public String toString() {
-        return "User{" +
+        return "Client{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", address='" + address + '\'' +
                 ", phone='" + phone + '\'' +
                 ", isProfessional=" + isProfessional +
-                ", projects=" + (projects != null ? projects : " No projects") +
+                ", projects=" + projects +
                 '}';
     }
-
 }

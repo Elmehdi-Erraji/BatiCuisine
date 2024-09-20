@@ -1,131 +1,112 @@
 package repository.implimentation;
 
-import domain.entities.Project;
-import domain.entities.User;
+import config.dbConnection;
 import domain.enums.ProjectStatus;
+import domain.entities.Project;
 import repository.Interfaces.ProjectRepository;
-import service.UserService;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ProjectRepositoryImpl implements ProjectRepository {
     private final Connection connection;
-    private final UserService userService;
 
-    public ProjectRepositoryImpl(Connection connection, UserService userService) {
+    public ProjectRepositoryImpl(Connection connection) {
         this.connection = connection;
-        this.userService = userService;
     }
 
     @Override
-    public void addProject(Project project) {
-        String query = "INSERT INTO projects (name, profitmargin, totalcost, status, client_id) VALUES (?, ?, ?, ?, ?)";
-        try (PreparedStatement ps = connection.prepareStatement(query)) {
-            ps.setString(1, project.getName());
-            ps.setDouble(2, project.getProfitMargin());
+    public Project save(Project project) {
+        String sql = project.getId() == null ?
+                "INSERT INTO projects (projectName, profit, totalCost, status, client_id) VALUES (?, ?, ?, ?::projectstatus, ?)" :
+                "UPDATE projects SET projectName = ?, profit = ?, totalCost = ?, status = ?, client_id = ? WHERE id = ?";
 
-            // Handle null value for total cost
-            if (project.getTotalCost() == null) {
-                ps.setNull(3, Types.DOUBLE);
-            } else {
-                ps.setDouble(3, project.getTotalCost());
+        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setString(1, project.getName());
+            stmt.setDouble(2, project.getProfitMargin());
+            stmt.setDouble(3, project.getTotalCost());
+            stmt.setString(4, project.getProjectStatus().name());
+            stmt.setInt(5, project.getClient().getId());
+
+            if (project.getId() != null) {
+                stmt.setInt(6, project.getId());
             }
 
-            // Handle enum value for status
-            ps.setString(4, project.getProjectStatus().name());
+            int affectedRows = stmt.executeUpdate();
 
-            // Set the client_id (user ID)
-            ps.setInt(5, project.getUser().getId());
+            if (affectedRows == 0) {
+                return null; // No project created/updated
+            }
 
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public Project getProjectById(int id) {
-        String query = "SELECT * FROM projects WHERE id = ?";
-        try (PreparedStatement ps = connection.prepareStatement(query)) {
-            ps.setInt(1, id);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return mapRowToProject(rs);
+            if (project.getId() == null) {
+                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        project.setId(generatedKeys.getInt(1));
+                    } else {
+                        throw new SQLException("Creating project failed, no ID obtained.");
+                    }
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return project;
+    }
+
+
+
+    @Override
+    public Optional<Project> findById(Integer id) {
+        String sql = "SELECT * FROM Projects WHERE id = ?";
+        Project Project = null;
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                Project = mapResultSetToProject(rs);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return Optional.ofNullable(Project);
     }
 
     @Override
-    public List<Project> getAllProjects() {
-        List<Project> projects = new ArrayList<>();
-        String query = "SELECT * FROM projects";
-        try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(query)) {
+    public List<Project> findAll() {
+        List<Project> ProjectList = new ArrayList<>();
+        String sql = "SELECT * FROM Projects";
+
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                projects.add(mapRowToProject(rs));
+                ProjectList.add(mapResultSetToProject(rs));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return projects;
+        return ProjectList;
     }
 
     @Override
-    public void updateProject(Project project) {
-        String query = "UPDATE projects SET name = ?, profitmargin = ?, totalcost = ?, status = ?, client_id = ? WHERE id = ?";
-        try (PreparedStatement ps = connection.prepareStatement(query)) {
-            ps.setString(1, project.getName());
-            ps.setDouble(2, project.getProfitMargin());
-
-            // Handle null value for total cost
-            if (project.getTotalCost() == null) {
-                ps.setNull(3, Types.DOUBLE);
-            } else {
-                ps.setDouble(3, project.getTotalCost());
-            }
-
-            // Handle enum value for status
-            ps.setString(4, project.getProjectStatus().name());
-
-            // Set the client_id (user ID)
-            ps.setInt(5, project.getUser().getId());
-
-            // Set the project ID
-            ps.setInt(6, project.getId());
-
-            ps.executeUpdate();
+    public void deleteById(Integer id) {
+        String sql = "DELETE FROM Projects WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    @Override
-    public void deleteProject(int id) {
-        String query = "DELETE FROM projects WHERE id = ?";
-        try (PreparedStatement ps = connection.prepareStatement(query)) {
-            ps.setInt(1, id);
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private Project mapRowToProject(ResultSet rs) throws SQLException {
-        int id = rs.getInt("id");
-        String name = rs.getString("name");
-        double profitMargin = rs.getDouble("profitmargin");
-        double totalCost = rs.getDouble("totalcost");
-        ProjectStatus status = ProjectStatus.valueOf(rs.getString("status"));
-        int userId = rs.getInt("client_id");
-
-        // Fetch the User using the UserService
-        User user = userService.getUserById(userId);
-
-        return new Project();
+    private Project mapResultSetToProject(ResultSet rs) throws SQLException {
+        return new Project(
+                rs.getInt("id"),
+                rs.getString("projectName"),
+                rs.getDouble("profit"),
+                rs.getDouble("totalCost"),
+                ProjectStatus.valueOf(rs.getString("status"))
+        );
     }
 }

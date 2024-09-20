@@ -1,55 +1,59 @@
 package service;
 
 import domain.entities.Component;
-import domain.entities.Labour;
 import domain.entities.Material;
+import domain.entities.Labour;
 import domain.entities.Project;
 import repository.Interfaces.ProjectRepository;
 
+import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 public class ProjectService {
     private final ProjectRepository projectRepository;
-    private final LabourService labourService;
-    private final MaterialsService materialsService;
 
-
-    public ProjectService(ProjectRepository projectRepository, LabourService labourService, MaterialsService materialsService) {
+    public ProjectService(ProjectRepository projectRepository) {
         this.projectRepository = projectRepository;
-        this.labourService = labourService;
-        this.materialsService = materialsService;
-
     }
 
+    public Project createProject(Project project) {
+        return projectRepository.save(project);
+    }
 
+    public Project createProjectWithComponents(Project project) throws SQLException {
+        Project savedProject = projectRepository.save(project);
 
-    public void addProject(Project project) {
-        // Save the project itself
-        projectRepository.addProject(project);
+        MaterialsService materialsService = new MaterialsService();
+        LabourService labourService = new LabourService();
 
-        // Save components of the project
-        for (Component component : project.getComponents()) {
-            if (component instanceof Labour) {
-                labourService.createLabour((Labour) component);
-            } else if (component instanceof Material) {
-                materialsService.createMaterials((Material) component);
+        List<Component> components = project.getComponents();
+
+        components.forEach(component -> {
+            component.setProject(savedProject);
+            if (component instanceof Material material) {
+                materialsService.createMaterial(material);
+            } else if (component instanceof Labour labour) {
+                labourService.createLabour(labour);
             }
-        }
+        });
+
+        return savedProject;
     }
 
-    public Project getProjectById(int id) {
-        return projectRepository.getProjectById(id);
+    public Optional<Project> getProjectById(Integer id) {
+        return projectRepository.findById(id);
     }
 
     public List<Project> getAllProjects() {
-        return projectRepository.getAllProjects();
+        return projectRepository.findAll();
     }
 
-    public void updateProject(Project project) {
-        projectRepository.updateProject(project);
+    public Project updateProject(Project project) {
+        return projectRepository.save(project);
     }
 
-    public void deleteProject(int id) {
-        projectRepository.deleteProject(id);
+    public void deleteProject(Integer id) {
+        projectRepository.deleteById(id);
     }
 }

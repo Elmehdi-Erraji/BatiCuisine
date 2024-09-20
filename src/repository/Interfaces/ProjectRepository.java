@@ -3,11 +3,13 @@ package repository.Interfaces;
 import domain.entities.Project;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProjectRepository {
-    void addProject(Project project);
-    Project getProjectById(int id);
-    List<Project> getAllProjects();
-    void updateProject(Project project);
-    void deleteProject(int id);
+    Project save(Project project);
+    Optional<Project> findById(Integer id);
+    List<Project> findAll();
+    void deleteById(Integer id);
 }
+
+
