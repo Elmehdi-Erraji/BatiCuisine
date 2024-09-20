@@ -10,9 +10,8 @@ public class Labour extends Component {
     private Double productivityRate;
 
     public Labour(String name, Double taxRate, Integer id, ComponentType componentType, Double hourlyRate, Double workHoursCount, Double productivityRate) {
-        super(name, taxRate);
+        super(name, taxRate,componentType);
         this.id = id;
-        this.componentType = componentType;
         this.hourlyRate = hourlyRate;
         this.workHoursCount = workHoursCount;
         this.productivityRate = productivityRate;

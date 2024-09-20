@@ -11,14 +11,15 @@ public class Material extends Component {
     private Double qualityCoefficient;
 
     public Material(String name, Double taxRate, Integer id, ComponentType componentType, Double unitCost, Double quantity, Double transportCost, Double qualityCoefficient) {
-        super(name, taxRate);
+        super(name, taxRate,componentType);
         this.id = id;
-        this.componentType = componentType;
         this.unitCost = unitCost;
         this.quantity = quantity;
         this.transportCost = transportCost;
         this.qualityCoefficient = qualityCoefficient;
     }
+
+
 
     // Getters and setters
     public Integer getId() {

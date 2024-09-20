@@ -7,15 +7,16 @@ import repository.implimentation.ClientRepositoryImpl;
 import service.ClientService;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
 public class ClientCRUDMenu {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         // Initialize the database connection
-        Connection connection = dbConnection.getConnection();
+        Connection connection = dbConnection.getInstance().getConnection();
 
         // Create repository and service objects
         CrudRepository<Client, Integer> clientRepository = new ClientRepositoryImpl(connection);

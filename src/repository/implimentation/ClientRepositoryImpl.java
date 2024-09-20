@@ -1,5 +1,6 @@
 package repository.implimentation;
 
+import config.dbConnection;
 import domain.entities.Client;
 import repository.Interfaces.CrudRepository;
 

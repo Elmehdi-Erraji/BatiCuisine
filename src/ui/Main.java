@@ -2,15 +2,12 @@ package ui;
 
 import config.dbConnection;
 import domain.entities.*;
-import domain.enums.ComponentType;
-import domain.enums.ProjectStatus;
 import repository.Interfaces.CrudRepository;
 import repository.Interfaces.ProjectRepository;
 import repository.implimentation.ClientRepositoryImpl;
 import repository.implimentation.ProjectRepositoryImpl;
 import service.ClientService;
 import service.ProjectService;
-import utils.ConsolePrinter;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -18,12 +15,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
-public class ProjectMenu {
+public class ProjectCRUDMenu {
 
     public static void main(String[] args) {
         try {
+            // Initialize the database connection
             Connection connection = dbConnection.getInstance().getConnection();
 
+            // Create repository and service objects
             CrudRepository<Client, Integer> clientRepository = new ClientRepositoryImpl(connection);
             ClientService clientService = new ClientService(clientRepository);
 
@@ -68,7 +67,7 @@ public class ProjectMenu {
         return scanner.nextInt();
     }
 
-    private static void addProject(Scanner scanner, ClientService clientService, ProjectService projectService) throws SQLException {
+    private static void addProject(Scanner scanner, ClientService clientService, ProjectService projectService) {
         System.out.print(" ==> Enter Client's ID: ");
         Integer clientId = scanner.nextInt();
         scanner.nextLine();
@@ -108,7 +107,7 @@ public class ProjectMenu {
             // Calculate the total cost
             double totalCost = calculateTotalCost(project.getComponents());
             project.setTotalCost(totalCost);
-            project.setProjectStatus(ProjectStatus.INPROGRESS);
+            project.setProjectStatus(EtatProject.INPROGRESS);
 
             ConsolePrinter.printCostDetails(totalCost);
 
@@ -162,22 +161,7 @@ public class ProjectMenu {
     private static double calculateTotalCost(List<Component> components) {
         double totalCost = 0;
         for (Component component : components) {
-            totalCost += component.calculateCost();
-        }
-        return totalCost;
-    }
-    private static double calculateTotalCost(List<Component> components) {
-        double totalCost = 0;
-        for (Component component : components) {
-            if (component instanceof Material) {
-                Material material = (Material) component;
-                totalCost += material.getUnitCost() * material.getQuantity() + material.getTransport() +
-                        (material.getUnitCost() * material.getQuantity() * (material.getTaxRate() / 100));
-            } else if (component instanceof Labour) {
-                Labour labour = (Labour) component;
-                totalCost += labour.getHourlyRate() * labour.getWorkHoursCount() +
-                        (labour.getHourlyRate() * labour.getWorkHoursCount() * (labour.getTaxRate() / 100));
-            }
+            totalCost += component.calculateCost(); // Assume calculateCost() method exists
         }
         return totalCost;
     }

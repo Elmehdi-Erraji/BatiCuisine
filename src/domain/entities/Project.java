@@ -18,7 +18,7 @@ public class Project {
         this.id = id;
         this.name = name;
         this.profitMargin = profitMargin;
-        this.totalCost = totalCost;
+        this.totalCost = 0.0;
         this.projectStatus = projectStatus;
         this.client = null;
         this.components = new ArrayList<>();
@@ -26,8 +26,6 @@ public class Project {
 
     public Project() {
     }
-
-
 
 
     // Getters and Setters
