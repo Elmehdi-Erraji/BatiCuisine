@@ -49,7 +49,7 @@ public class Mappers {
                 rs.getInt("id"),
                 rs.getString("name"),
                 rs.getString("address"),
-                rs.getString("phoneNumber"),
+                rs.getString("phone"),
                 rs.getBoolean("isProfessional")
         );
     }
