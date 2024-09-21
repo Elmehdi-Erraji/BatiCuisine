@@ -18,8 +18,8 @@ public class ProjectRepositoryImpl implements ProjectRepository {
     @Override
     public Project save(Project project) {
         String sql = project.getId() == null ?
-                "INSERT INTO Projets (projectName, profit, totalCost, status, client_id, discount) VALUES (?, ?, ?, ?::projectstatus, ?, ?)" :
-                "UPDATE Projets SET projectName = ?, profit = ?, totalCost = ?, status = ?, client_id = ? WHERE id = ?";
+                "INSERT INTO projects (projectname, profit, totalcost, status, client_id, discount) VALUES (?, ?, ?, ?::projectstatus, ?, ?)" :
+                "UPDATE projects SET projectname = ?, profit = ?, totalcost = ?, status = ?, client_id = ? WHERE id = ?";
 
         try {
             dbConnection = DBConnection.getInstance();
@@ -67,7 +67,7 @@ public class ProjectRepositoryImpl implements ProjectRepository {
 
     @Override
     public Optional<Project> findById(Integer id) {
-        String sql = "SELECT * FROM Projets WHERE id = ?";
+        String sql = "SELECT * FROM projects WHERE id = ?";
         try {
             dbConnection = DBConnection.getInstance();
             if (dbConnection != null) {
@@ -94,7 +94,7 @@ public class ProjectRepositoryImpl implements ProjectRepository {
     @Override
     public List<Project> findAll() {
         List<Project> projectList = new ArrayList<>();
-        String sql = "SELECT * FROM Projets";
+        String sql = "SELECT * FROM projects";
 
         try {
             dbConnection = DBConnection.getInstance();
@@ -120,7 +120,7 @@ public class ProjectRepositoryImpl implements ProjectRepository {
 
     @Override
     public void deleteById(Integer id) {
-        String sql = "DELETE FROM Projets WHERE id = ?";
+        String sql = "DELETE FROM projects WHERE id = ?";
 
         try {
             dbConnection = DBConnection.getInstance();

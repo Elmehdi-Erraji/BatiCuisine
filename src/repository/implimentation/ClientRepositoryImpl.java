@@ -66,7 +66,7 @@ public class ClientRepositoryImpl implements ClientRepository {
 
     @Override
     public Optional<Client> findById(Integer id) {
-        String sql = "SELECT * FROM Clients WHERE id = ?";
+        String sql = "SELECT * FROM clients WHERE id = ?";
 
         try {
             dbConnection = DBConnection.getInstance();
@@ -94,7 +94,7 @@ public class ClientRepositoryImpl implements ClientRepository {
     @Override
     public List<Client> findAll() {
         List<Client> clientList = new ArrayList<>();
-        String sql = "SELECT * FROM Clients";
+        String sql = "SELECT * FROM clients";
 
 
         try {
@@ -121,7 +121,7 @@ public class ClientRepositoryImpl implements ClientRepository {
 
     @Override
     public void deleteById(Integer id) {
-        String sql = "DELETE FROM Clients WHERE id = ?";
+        String sql = "DELETE FROM clients WHERE id = ?";
 
         try {
             dbConnection = DBConnection.getInstance();
@@ -145,7 +145,7 @@ public class ClientRepositoryImpl implements ClientRepository {
     @Override
     public List<Client> findByProfessional(Boolean isProfessional) {
         List<Client> clientList = new ArrayList<>();
-        String sql = "SELECT * FROM Clients WHERE isProfessional = ?";
+        String sql = "SELECT * FROM clients WHERE isProfessional = ?";
 
         try {
             dbConnection = DBConnection.getInstance();

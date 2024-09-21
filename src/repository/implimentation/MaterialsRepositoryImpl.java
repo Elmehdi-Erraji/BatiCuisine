@@ -16,10 +16,10 @@ public class MaterialsRepositoryImpl implements MaterialsRepository {
     private Connection connection = null;
 
     @Override
-    public Material save(Material materiau) {
-        String sql = materiau.getId() == null ?
-                "INSERT INTO Materiaux (name, taxRate, unitCost, quantity, transportCost, qualityCoefficient, project_id) VALUES (?, ?, ?, ?, ?, ?, ?)" :
-                "UPDATE Materiaux SET name = ?, taxRate = ?, unitCost = ?, quantity = ?, transportCost = ?, qualityCoefficient = ? WHERE id = ?";
+    public Material save(Material material) {
+        String sql = material.getId() == null ?
+                "INSERT INTO materials (name, tax_rate, unitcost, quantity, transportcost, qualitycoefficient, project_id) VALUES (?, ?, ?, ?, ?, ?, ?)" :
+                "UPDATE materials SET name = ?, tax_rate = ?, unitcost = ?, quantity = ?, transportcost = ?, qualitycoefficient = ? WHERE id = ?";
 
         try {
             dbConnection = DBConnection.getInstance();
@@ -27,17 +27,17 @@ public class MaterialsRepositoryImpl implements MaterialsRepository {
                 connection = dbConnection.getConnection();
 
                 try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-                    stmt.setString(1, materiau.getName());
-                    stmt.setDouble(2, materiau.getTaxRate());
-                    stmt.setDouble(3, materiau.getUnitCost());
-                    stmt.setDouble(4, materiau.getQuantity());
-                    stmt.setDouble(5, materiau.getTransportCost());
-                    stmt.setDouble(6, materiau.getQualityCoefficient());
-                    stmt.setDouble(7, materiau.getProject().getId());
+                    stmt.setString(1, material.getName());
+                    stmt.setDouble(2, material.getTaxRate());
+                    stmt.setDouble(3, material.getUnitCost());
+                    stmt.setDouble(4, material.getQuantity());
+                    stmt.setDouble(5, material.getTransportCost());
+                    stmt.setDouble(6, material.getQualityCoefficient());
+                    stmt.setDouble(7, material.getProject().getId());
 
 
-                    if (materiau.getId() != null) {
-                        stmt.setInt(7, materiau.getId());
+                    if (material.getId() != null) {
+                        stmt.setInt(7, material.getId());
                     }
 
                     int affectedRows = stmt.executeUpdate();
@@ -46,10 +46,10 @@ public class MaterialsRepositoryImpl implements MaterialsRepository {
                         throw new SQLException("Creating materiau failed, no rows affected.");
                     }
 
-                    if (materiau.getId() == null) {
+                    if (material.getId() == null) {
                         try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
                             if (generatedKeys.next()) {
-                                materiau.setId(generatedKeys.getInt(1));
+                                material.setId(generatedKeys.getInt(1));
                             } else {
                                 throw new SQLException("Creating materiau failed, no ID obtained.");
                             }
@@ -68,12 +68,12 @@ public class MaterialsRepositoryImpl implements MaterialsRepository {
             throw new RuntimeException(e);
         }
 
-        return materiau;
+        return material;
     }
 
     @Override
     public Optional<Material> findById(Integer id) {
-        String sql = "SELECT * FROM Materiaux WHERE id = ?";
+        String sql = "SELECT * FROM materials WHERE id = ?";
 
         try {
             dbConnection = DBConnection.getInstance();
@@ -104,7 +104,7 @@ public class MaterialsRepositoryImpl implements MaterialsRepository {
     @Override
     public List<Material> findAll() {
         List<Material> materialList = new ArrayList<>();
-        String sql = "SELECT * FROM Materiaux";
+        String sql = "SELECT * FROM materials";
 
         try {
             dbConnection = DBConnection.getInstance();
@@ -135,7 +135,7 @@ public class MaterialsRepositoryImpl implements MaterialsRepository {
 
     @Override
     public void deleteById(Integer id) {
-        String sql = "DELETE FROM Materiaux WHERE id = ?";
+        String sql = "DELETE FROM materials WHERE id = ?";
 
         try {
             dbConnection = DBConnection.getInstance();

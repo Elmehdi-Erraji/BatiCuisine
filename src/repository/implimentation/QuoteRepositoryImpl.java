@@ -17,7 +17,7 @@ public class QuoteRepositoryImpl implements QuoteRepository {
 
     @Override
     public Quote save(Quote Quote) {
-        String sql = Quote.getId() == null ? "INSERT INTO Quote (estimatedPrice, issueDate, validityDate, accepted, project_id) VALUES (?, ?, ?, ?, ?)" : "UPDATE Quote SET estimatedPrice = ?, issueDate = ?, validityDate = ?, accepted = ?, project_id = ? WHERE id = ?";
+        String sql = Quote.getId() == null ? "INSERT INTO quotes (estimatedprice, issuedate, validitydate, accepted, project_id) VALUES (?, ?, ?, ?, ?)" : "UPDATE Quote SET estimatedPrice = ?, issueDate = ?, validityDate = ?, accepted = ?, project_id = ? WHERE id = ?";
 
         try {
             dbConnection = DBConnection.getInstance();
@@ -68,7 +68,7 @@ public class QuoteRepositoryImpl implements QuoteRepository {
 
     @Override
     public Optional<Quote> findById(Integer id) {
-        String sql = "SELECT * FROM Quote WHERE id = ?";
+        String sql = "SELECT * FROM quotes WHERE id = ?";
 
         try {
             dbConnection = DBConnection.getInstance();
@@ -99,7 +99,7 @@ public class QuoteRepositoryImpl implements QuoteRepository {
     @Override
     public List<Quote> findAll() {
         List<Quote> QuoteList = new ArrayList<>();
-        String sql = "SELECT * FROM Quote";
+        String sql = "SELECT * FROM quotes";
         try {
             dbConnection = DBConnection.getInstance();
             if (dbConnection != null) {
@@ -127,7 +127,7 @@ public class QuoteRepositoryImpl implements QuoteRepository {
 
     @Override
     public void deleteById(Integer id) {
-        String sql = "DELETE FROM Quote WHERE id = ?";
+        String sql = "DELETE FROM quotes WHERE id = ?";
         try {
             dbConnection = DBConnection.getInstance();
             if (dbConnection != null) {
@@ -153,7 +153,7 @@ public class QuoteRepositoryImpl implements QuoteRepository {
     @Override
     public List<Quote> findQuoteWithProjectById(Client client) {
         List<Quote> devisList = new ArrayList<>();
-        String sql = "Select * FROM Devis d JOIN projets p ON d.project_id = p.id WHERE p.client_id = ?";
+        String sql = "Select * FROM quotes d JOIN projets p ON d.project_id = p.id WHERE p.client_id = ?";
 
         try {
             dbConnection = DBConnection.getInstance();
