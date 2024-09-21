@@ -19,8 +19,8 @@ public class ClientRepositoryImpl implements ClientRepository {
     @Override
     public Client save(Client client) {
         String sql = client.getId() == null ?
-                "INSERT INTO Clients (name, address, phoneNumber, isProfessional) VALUES (?, ?, ?, ?)" :
-                "UPDATE Clients SET name = ?, address = ?, phoneNumber = ?, isProfessional = ? WHERE id = ?";
+                "INSERT INTO Clients (name, address, phone, isProfessional) VALUES (?, ?, ?, ?)" :
+                "UPDATE Clients SET name = ?, address = ?, phone = ?, isProfessional = ? WHERE id = ?";
 
         try {
             dbConnection = DBConnection.getInstance();

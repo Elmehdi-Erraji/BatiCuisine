@@ -18,8 +18,8 @@ public class LabourRepositoryImpl implements LabourRepository {
     @Override
     public Labour save(Labour labour) {
         String sql = labour.getId() == null ?
-                "INSERT INTO MainDœuvre (name, taxRate, hourlyRate, workHoursCount, productivityRate, project_id) VALUES (?, ?, ?, ?, ?, ?)" :
-                "UPDATE MainDœuvre SET name = ?, taxRate = ?, hourlyRate = ?, workHoursCount = ?, productivityRate = ? WHERE id = ?";
+                "INSERT INTO MainDœuvre (name, taxrate, hourlyRate, workHoursCount, productivityRate, project_id) VALUES (?, ?, ?, ?, ?, ?)" :
+                "UPDATE MainDœuvre SET name = ?, taxrate = ?, hourlyRate = ?, workHoursCount = ?, productivityRate = ? WHERE id = ?";
 
         try {
             dbConnection = DBConnection.getInstance();
