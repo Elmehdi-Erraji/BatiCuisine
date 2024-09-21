@@ -153,7 +153,7 @@ public class QuoteRepositoryImpl implements QuoteRepository {
     @Override
     public List<Quote> findQuoteWithProjectById(Client client) {
         List<Quote> devisList = new ArrayList<>();
-        String sql = "Select * FROM quotes d JOIN projets p ON d.project_id = p.id WHERE p.client_id = ?";
+        String sql = "Select * FROM quotes d JOIN projects p ON d.project_id = p.id WHERE p.client_id = ?";
 
         try {
             dbConnection = DBConnection.getInstance();
@@ -189,24 +189,24 @@ public class QuoteRepositoryImpl implements QuoteRepository {
             throw new IllegalArgumentException("Cannot update a Quote without an ID");
         }
 
-        StringBuilder sql = new StringBuilder("UPDATE Quote SET ");
+        StringBuilder sql = new StringBuilder("UPDATE quotes SET ");
         List<Object> params = new ArrayList<>();
         boolean needComma = false;
 
         if (Quote.getEstimatedPrice() != null) {
-            sql.append("estimatedPrice = ?");
+            sql.append("estimatedprice = ?");
             params.add(Quote.getEstimatedPrice());
             needComma = true;
         }
         if (Quote.getIssueDate() != null) {
             if (needComma) sql.append(", ");
-            sql.append("issueDate = ?");
+            sql.append("issuedate = ?");
             params.add(Date.valueOf(Quote.getIssueDate()));
             needComma = true;
         }
         if (Quote.getValidityDate() != null) {
             if (needComma) sql.append(", ");
-            sql.append("validityDate = ?");
+            sql.append("validitydate = ?");
             params.add(Date.valueOf(Quote.getValidityDate()));
             needComma = true;
         }
