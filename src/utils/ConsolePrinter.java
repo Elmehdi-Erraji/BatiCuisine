@@ -31,6 +31,7 @@ public class ConsolePrinter {
     }
 
     public static void projectMenu() {
+        System.out.println(" +----------------------------------------+");
         System.out.println(" |               Project Menu             |");
         System.out.println(" +----------------------------------------+");
         System.out.println(" |  📁  5. Create a new project           |");
