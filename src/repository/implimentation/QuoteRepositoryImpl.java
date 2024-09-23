@@ -164,7 +164,7 @@ public class QuoteRepositoryImpl implements QuoteRepository {
                     stmt.setInt(1, client.getId());
                     ResultSet rs = stmt.executeQuery();
                     while (rs.next()) {
-                        devisList.add(Mappers.mapResultSetToDevisAndPorject(rs));
+                        devisList.add(Mappers.mapResultSetToQuotesAndPorject(rs));
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();

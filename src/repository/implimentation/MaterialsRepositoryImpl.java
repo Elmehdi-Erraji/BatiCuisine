@@ -84,7 +84,7 @@ public class MaterialsRepositoryImpl implements MaterialsRepository {
                     pstmt.setInt(1, id);
                     ResultSet rs = pstmt.executeQuery();
                     if (rs.next()) {
-                        return Optional.of(Mappers.mapResultSetToMateriaux(rs));
+                        return Optional.of(Mappers.mapResultSetToMaterials(rs));
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -114,7 +114,7 @@ public class MaterialsRepositoryImpl implements MaterialsRepository {
                 try (Statement stmt = connection.createStatement();
                      ResultSet rs = stmt.executeQuery(sql)) {
                     while (rs.next()) {
-                        materialList.add(Mappers.mapResultSetToMateriaux(rs));
+                        materialList.add(Mappers.mapResultSetToMaterials(rs));
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();

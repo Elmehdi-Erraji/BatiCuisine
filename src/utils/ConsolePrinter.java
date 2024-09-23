@@ -6,34 +6,42 @@ import utils.Types.CostBreakdown;
 
 public class ConsolePrinter {
 
-    public static void mainMenu(){
+    public static void mainMenu() {
         System.out.println(" +----------------------------------------+");
-        System.out.println(" |           professionnel Menu           |");
+        System.out.println(" |           🏗️ BatiCuisine Menu        |");
         System.out.println(" +----------------------------------------+");
-        System.out.println(" |  1. Create a new project               |");
-        System.out.println(" |  2. Add Components to a Project        |");
-        System.out.println(" |  3. Get Details of a Project           |");
+        System.out.println(" |  👤  1. Client Management Menu         |");
         System.out.println(" +----------------------------------------+");
-        System.out.println(" |               Client Menu              |");
+        System.out.println(" |  📁  2. Project Management Menu        |");
         System.out.println(" +----------------------------------------+");
-        System.out.println(" |  4. Add a Client                       |");
-        System.out.println(" |  5. Accept/Refuse Quote                |");
-        System.out.println(" +----------------------------------------+");
-        System.out.println(" |  6. Exit                               |");
+        System.out.println(" |  ❌  3. Exit                           |");
         System.out.println(" +----------------------------------------+");
         System.out.print(" ==> Enter your choice: ");
     }
 
-    public static void clientMenu(){
-        System.out.println(" +----------------------------------------+");
+    public static void clientMenu() {
         System.out.println(" |               Client Menu              |");
         System.out.println(" +----------------------------------------+");
-        System.out.println(" |  1. Search for an existing Client    |");
-        System.out.println(" |  2. Add a new Client                 |");
-        System.out.println(" |  4. Exit                               |");
+        System.out.println(" |  👤  1. Add a Client                   |");
+        System.out.println(" |  ✏️  2. Update a Client                |");
+        System.out.println(" |  ❌  3. Delete a Client                |");
+        System.out.println(" |  ✔️  4. Accept/Refuse Quote            |");
         System.out.println(" +----------------------------------------+");
         System.out.print(" ==> Enter your choice: ");
     }
+
+    public static void projectMenu() {
+        System.out.println(" |               Project Menu             |");
+        System.out.println(" +----------------------------------------+");
+        System.out.println(" |  📁  5. Create a new project           |");
+        System.out.println(" |  🔄  6. Update a Project               |");
+        System.out.println(" |  🗑️  7. Delete a Project               |");
+        System.out.println(" |  ➕  8. Add Components to a Project     |");
+        System.out.println(" |  ℹ️  9. Get Details of a Project        |");
+        System.out.println(" +----------------------------------------+");
+        System.out.print(" ==> Enter your choice: ");
+    }
+
 
     public static void printError(String message){
         String redText = "\033[0;31m";

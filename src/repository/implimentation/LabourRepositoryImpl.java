@@ -82,7 +82,7 @@ public class LabourRepositoryImpl implements LabourRepository {
                     pstmt.setInt(1, id);
                     ResultSet rs = pstmt.executeQuery();
                     if (rs.next()) {
-                        return Optional.of(Mappers.mapResultSetToMainDœuvre(rs));
+                        return Optional.of(Mappers.mapResultSetToLabours(rs));
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -113,7 +113,7 @@ public class LabourRepositoryImpl implements LabourRepository {
                 try (Statement stmt = connection.createStatement();
                      ResultSet rs = stmt.executeQuery(sql)) {
                     while (rs.next()) {
-                        labourList.add(Mappers.mapResultSetToMainDœuvre(rs));
+                        labourList.add(Mappers.mapResultSetToLabours(rs));
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();

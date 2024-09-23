@@ -14,7 +14,6 @@ public class CostBreakdown {
         this.profit = 0.0;
     }
 
-    // Getters
     public double getBaseCost() { return baseCost; }
     public double getTaxAmount() { return taxAmount; }
     public double getTotalCost() { return (baseCost + taxAmount + profit) - discount; }
