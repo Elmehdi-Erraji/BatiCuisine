@@ -1,11 +1,11 @@
-package service;
+package service.interfaces;
 
 import domain.entities.Client;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface ClientServiceInterface {
+public interface ClientService {
     Client createClient(Client client);
 
     Optional<Client> getClientById(Integer id);

@@ -1,4 +1,4 @@
-package service;
+package service.implimentation;
 
 
 import domain.entities.Component;
@@ -6,28 +6,29 @@ import domain.entities.Labour;
 import domain.entities.Material;
 import domain.entities.Project;
 import repository.Interfaces.ProjectRepository;
-import service.LabourService;
-import service.MaterialsService;
+import service.interfaces.ProjectService;
 
 import java.util.List;
 import java.util.Optional;
 
-public class ProjectService {
+public class ProjectServiceImpl implements ProjectService {
     private final ProjectRepository projectRepository;
 
-    public ProjectService(ProjectRepository projectRepository) {
+    public ProjectServiceImpl(ProjectRepository projectRepository) {
         this.projectRepository = projectRepository;
     }
 
+    @Override
     public Project createProject(Project project) {
         return projectRepository.save(project);
     }
 
+    @Override
     public Project createprojectWithComponents(Project project) {
         Project savedProject = projectRepository.save(project);
 
-        MaterialsService materialsService =  new MaterialsService();
-        LabourService labourService =  new LabourService();
+        MaterialsServiceImpl materialsServiceImpl =  new MaterialsServiceImpl();
+        LabourServiceImpl labourServiceImpl =  new LabourServiceImpl();
 
         List<Component> components =  project.getComponents();
 
@@ -35,12 +36,12 @@ public class ProjectService {
             if (component instanceof Material material) {
 
                 component.setProject(savedProject);
-                materialsService.createMaterial(material);
+                materialsServiceImpl.createMaterial(material);
 
             } else if (component instanceof Labour labour) {
 
                 component.setProject(savedProject);
-                labourService.createLabour(labour);
+                labourServiceImpl.createLabour(labour);
 
             }
         });
@@ -49,18 +50,22 @@ public class ProjectService {
     }
 
 
+    @Override
     public Optional<Project> getprojectById(Integer id) {
         return projectRepository.findById(id);
     }
 
+    @Override
     public List<Project> getAllprojects() {
         return projectRepository.findAll();
     }
 
+    @Override
     public Project updateproject(Project project) {
         return projectRepository.save(project);
     }
 
+    @Override
     public void deleteproject(Integer id) {
         projectRepository.deleteById(id);
     }

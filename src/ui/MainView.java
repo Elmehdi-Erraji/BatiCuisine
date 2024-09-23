@@ -3,9 +3,9 @@ package ui;
 import domain.entities.*;
 import domain.enums.ProjectStatus;
 import domain.enums.ComponentType;
-import service.ClientService;
-import service.QuoteService;
-import service.ProjectService;
+import service.implimentation.ClientServiceImpl;
+import service.implimentation.QuoteServiceImpl;
+import service.implimentation.ProjectServiceImpl;
 import utils.ConsolePrinter;
 import utils.Types.CostBreakdown;
 import repository.Interfaces.ClientRepository;
@@ -32,8 +32,8 @@ public class MainView {
 
         Boolean ispro = isProfessional.equals("y") ? Boolean.TRUE : Boolean.FALSE;
         ClientRepository clientRepository = new ClientRepositoryImpl();
-        ClientService clientService = new ClientService(clientRepository);
-        clientService.createClient(new Client(null, name, address, phoneNumber, ispro));
+        ClientServiceImpl clientServiceImpl = new ClientServiceImpl(clientRepository);
+        clientServiceImpl.createClient(new Client(null, name, address, phoneNumber, ispro));
         System.out.println("Client created Successfully");
 
     }
@@ -44,8 +44,8 @@ public class MainView {
         scanner.nextLine();
 
         ClientRepository clientRepository = new ClientRepositoryImpl();
-        ClientService clientService = new ClientService(clientRepository);
-        Optional<Client> client =  clientService.getClientById(clientId);
+        ClientServiceImpl clientServiceImpl = new ClientServiceImpl(clientRepository);
+        Optional<Client> client =  clientServiceImpl.getClientById(clientId);
 
         if(client.isPresent()){
             ConsolePrinter.printClient(client.get());
@@ -57,7 +57,7 @@ public class MainView {
             scanner.nextLine();
 
             ProjectRepository ProjectRepository = new repository.implimentation.ProjectRepositoryImpl();
-            ProjectService ProjectService = new ProjectService(ProjectRepository);
+            ProjectServiceImpl ProjectServiceImpl = new ProjectServiceImpl(ProjectRepository);
 
             Project Project = new Project(null, projectName, profit, null,null, null);
             Project.setClient(client.get());
@@ -128,10 +128,10 @@ public class MainView {
             String saveChoice = scanner.nextLine();
 
             if(saveChoice.equals("y")){
-                ProjectService.createprojectWithComponents(Project);
+                ProjectServiceImpl.createprojectWithComponents(Project);
             }
 
-            QuoteService QuoteService = new QuoteService();
+            QuoteServiceImpl QuoteServiceImpl = new QuoteServiceImpl();
             addDevisView(Project);
 
 
@@ -147,14 +147,14 @@ public class MainView {
         scanner.nextLine();
 
         ClientRepository clientRepository = new ClientRepositoryImpl();
-        ClientService clientService = new ClientService(clientRepository);
-        Optional<Client> client =  clientService.getClientById(clientId);
+        ClientServiceImpl clientServiceImpl = new ClientServiceImpl(clientRepository);
+        Optional<Client> client =  clientServiceImpl.getClientById(clientId);
 
         if(client.isPresent()){
             ConsolePrinter.printClient(client.get());
 
-            QuoteService QuoteService = new QuoteService();
-            List<Quote> quotesList = QuoteService.getQuoteWithProject(client.get());
+            QuoteServiceImpl QuoteServiceImpl = new QuoteServiceImpl();
+            List<Quote> quotesList = QuoteServiceImpl.getQuoteWithProject(client.get());
 
             for(Quote quotes : quotesList){
                 ConsolePrinter.printQuote(quotes);
@@ -176,7 +176,7 @@ public class MainView {
                 assert currentquotes != null;
                 if(!currentquotes.getAccepted()){
                     try {
-                        Quote returnedQuotes = QuoteService.acceptQuote(currentquotes);
+                        Quote returnedQuotes = QuoteServiceImpl.acceptQuote(currentquotes);
                         ConsolePrinter.printSuccess("Devis Accepted Successfully: ID " + returnedQuotes.getId());
                     } catch (Exception e){
                         ConsolePrinter.printError(e.getMessage());
@@ -252,7 +252,7 @@ public class MainView {
             validity = scanner.nextLine();
         }
 
-        QuoteService QuoteService = new QuoteService();
+        QuoteServiceImpl QuoteServiceImpl = new QuoteServiceImpl();
         Quote quote = new Quote(
                 null,
                 Project.getTotalCost(),
@@ -263,7 +263,7 @@ public class MainView {
         );
 
         ConsolePrinter.printQuote(quote);
-        QuoteService.createQuote(quote);
+        QuoteServiceImpl.createQuote(quote);
 
     }
 

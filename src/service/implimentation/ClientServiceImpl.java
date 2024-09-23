@@ -1,13 +1,14 @@
-package service;
+package service.implimentation;
 
 
 import domain.entities.Client;
 import repository.Interfaces.ClientRepository;
+import service.interfaces.ClientService;
 
 import java.util.List;
 import java.util.Optional;
 
-public class ClientServiceImpl implements ClientServiceInterface {
+public class ClientServiceImpl implements ClientService {
     private final ClientRepository clientRepository;
 
     public ClientServiceImpl(ClientRepository clientRepository) {
