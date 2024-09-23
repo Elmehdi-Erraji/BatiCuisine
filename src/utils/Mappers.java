@@ -32,7 +32,7 @@ public class Mappers {
                 projet);
     }
 
-    static public Quote mapResultSetToDevisAndPorject(ResultSet rs) throws SQLException {
+    static public Quote mapResultSetToQuotesAndPorject(ResultSet rs) throws SQLException {
         Project projet =  Mappers.mapResultSetToProjet(rs);
 
         return new Quote(
@@ -54,7 +54,7 @@ public class Mappers {
         );
     }
 
-    static public Labour mapResultSetToMainDœuvre(ResultSet rs) throws SQLException {
+    static public Labour mapResultSetToLabours(ResultSet rs) throws SQLException {
         return new Labour(
                 rs.getString("name"),
                 rs.getDouble("taxRate"),
@@ -66,7 +66,7 @@ public class Mappers {
         );
     }
 
-    static public Material mapResultSetToMateriaux(ResultSet rs) throws SQLException {
+    static public Material mapResultSetToMaterials(ResultSet rs) throws SQLException {
         return new Material(
                 rs.getString("name"),
                 rs.getDouble("taxRate"),

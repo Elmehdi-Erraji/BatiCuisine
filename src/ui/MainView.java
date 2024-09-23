@@ -11,260 +11,173 @@ import utils.Types.CostBreakdown;
 import repository.Interfaces.ClientRepository;
 import repository.implimentation.ClientRepositoryImpl;
 import repository.Interfaces.ProjectRepository;
+import validation.InputValidator;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class MainView {
     private static final Scanner scanner = new Scanner(System.in);
+    private static ClientRepository clientRepository = new ClientRepositoryImpl();
+    private static ClientService clientService = new ClientService(clientRepository);
 
-    static public void createClient(){
-        System.out.print(" ==> Entre FullName: ");
-        String name = scanner.nextLine();
-        System.out.print(" ==> Entre Address: ");
-        String address = scanner.nextLine();
-        System.out.print(" ==> Entre Phone Number: ");
-        String phoneNumber = scanner.nextLine();
-        System.out.print(" ==> is Professional ? (n/y): ");
-        String isProfessional = scanner.nextLine();
+    static public void createClient() {
+        String name = InputValidator.validateNonEmptyString(" ==> Enter Full Name: ");
+        String address = InputValidator.validateNonEmptyString(" ==> Enter Address: ");
+        String phoneNumber = InputValidator.validatePhoneNumber(" ==> Enter Phone Number: ");
+        boolean isProfessional = InputValidator.validateYesNo(" ==> Is Professional?");
 
-
-        Boolean ispro = isProfessional.equals("y") ? Boolean.TRUE : Boolean.FALSE;
-        ClientRepository clientRepository = new ClientRepositoryImpl();
-        ClientService clientService = new ClientService(clientRepository);
-        clientService.createClient(new Client(null, name, address, phoneNumber, ispro));
+        Client newClient = new Client(null, name, address, phoneNumber, isProfessional);
+        clientService.createClient(newClient);
         System.out.println("Client created Successfully");
-
     }
 
-    static public void createProject(){
-        System.out.print(" ==> Entre Client's ID: ");
-        Integer clientId = scanner.nextInt();
-        scanner.nextLine();
+    static public void createProject() {
+        Integer clientId = InputValidator.validateInteger(" ==> Enter Client's ID: ");
+        Optional<Client> client = clientService.getClientById(clientId);
 
-        ClientRepository clientRepository = new ClientRepositoryImpl();
-        ClientService clientService = new ClientService(clientRepository);
-        Optional<Client> client =  clientService.getClientById(clientId);
-
-        if(client.isPresent()){
+        if (client.isPresent()) {
             ConsolePrinter.printClient(client.get());
+            String projectName = InputValidator.validateNonEmptyString(" ==> Enter Project Name: ");
+            Double profit = InputValidator.validateDouble(" ==> Enter Profit Margin (%): ");
 
-            System.out.print(" ==> Entre Project Name: ");
-            String projectName = scanner.nextLine();
-            System.out.print(" ==> Entre Profit Margin (%): ");
-            Double profit = scanner.nextDouble();
-            scanner.nextLine();
-
-            ProjectRepository ProjectRepository = new repository.implimentation.ProjectRepositoryImpl();
-            ProjectService ProjectService = new ProjectService(ProjectRepository);
-
-            Project Project = new Project(null, projectName, profit, null,null, null);
-            Project.setClient(client.get());
+            ProjectRepository projectRepository = new repository.implimentation.ProjectRepositoryImpl();
+            ProjectService projectService = new ProjectService(projectRepository);
+            Project project = new Project(null, projectName, profit, null, null, null);
+            project.setClient(client.get());
 
             materialsLoop:
-            while (true){
-                scanner.nextLine();
-                System.out.print(" ==> Do you want to add Materials to this Project? [y/n]: ");
-                String componentsChoice = scanner.nextLine();
-                switch (componentsChoice){
-                    case "y":
-                        Material material =  addMaterialsView();
-                        Project.getComponents().add(material);
-                        ConsolePrinter.printSuccess("Material Has Been Added Successfully");
-                        break;
-                    case "n":
-                        break materialsLoop;
+            while (true) {
+                boolean addMaterial = InputValidator.validateYesNo(" ==> Do you want to add Materials to this Project?");
+                if (addMaterial) {
+                    Material material = addMaterialsView();
+                    project.getComponents().add(material);
+                    ConsolePrinter.printSuccess("Material Has Been Added Successfully");
+                } else {
+                    break materialsLoop;
                 }
             }
 
             laborLoop:
-            while (true){
-                scanner.nextLine();
-                System.out.print(" ==> Do you want to add Labor to this Project? [y/n]: ");
-                String laborChoice = scanner.nextLine();
-                switch (laborChoice){
-                    case "y":
-                        Labour Labour =  addLaborView();
-                        Project.getComponents().add(Labour);
-                        ConsolePrinter.printSuccess("Labor Has Been Added Successfully");
-                        break;
-                    case "n":
-                        break laborLoop;
+            while (true) {
+                boolean addLabor = InputValidator.validateYesNo(" ==> Do you want to add Labor to this Project?");
+                if (addLabor) {
+                    Labour labour = addLaborView();
+                    project.getComponents().add(labour);
+                    ConsolePrinter.printSuccess("Labor Has Been Added Successfully");
+                } else {
+                    break laborLoop;
                 }
             }
 
-            CostBreakdown costBreakdown = calculateCost(Project.getComponents());
+            CostBreakdown costBreakdown = calculateCost(project.getComponents());
 
-            System.out.print(" ==> Do you want to apply a profit margin? [y/n]: ");
-            String marginChoice = scanner.nextLine();
-
-            if(marginChoice.equals("y")){
-                costBreakdown.setProfit(costBreakdown.getBaseCost() * (Project.getProfit() / 100));
+            boolean applyMargin = InputValidator.validateYesNo(" ==> Do you want to apply a profit margin?");
+            if (applyMargin) {
+                costBreakdown.setProfit(costBreakdown.getBaseCost() * (project.getProfit() / 100));
             }
 
-            System.out.print(" ==> Do you want to apply a Discount to This Client? [y/n]: ");
-            String discountChoice = scanner.nextLine();
-
-            if(discountChoice.equals("y")){
-                System.out.print(" ==> Entre Discount percentage (%): ");
-                Double discount = scanner.nextDouble();
-                scanner.nextLine();
-
-                Project.setDiscount(discount);
-            }else {
-                Project.setDiscount(0.0);
+            boolean applyDiscount = InputValidator.validateYesNo(" ==> Do you want to apply a Discount to This Client?");
+            if (applyDiscount) {
+                Double discount = InputValidator.validateDouble(" ==> Enter Discount percentage (%): ");
+                project.setDiscount(discount);
+            } else {
+                project.setDiscount(0.0);
             }
 
-            costBreakdown.setDiscount(costBreakdown.getProfit() * (Project.getDiscount() / 100));
-
-            Project.setTotalCost(costBreakdown.getTotalCost());
-            Project.setProjectStatus(ProjectStatus.INPROGRESS);
-
+            costBreakdown.setDiscount(costBreakdown.getProfit() * (project.getDiscount() / 100));
+            project.setTotalCost(costBreakdown.getTotalCost());
+            project.setProjectStatus(ProjectStatus.INPROGRESS);
 
             ConsolePrinter.printCostDetails(costBreakdown);
 
-            System.out.print(" ==> Do you want to save this project? [y/n]: ");
-            String saveChoice = scanner.nextLine();
-
-            if(saveChoice.equals("y")){
-                ProjectService.createprojectWithComponents(Project);
+            boolean saveProject = InputValidator.validateYesNo(" ==> Do you want to save this project?");
+            if (saveProject) {
+                projectService.createprojectWithComponents(project);
             }
 
-            QuoteService QuoteService = new QuoteService();
-            addDevisView(Project);
-
-
-        }else {
+            QuoteService quoteService = new QuoteService();
+            addquoteView(project);
+        } else {
             System.out.println("Client not found");
         }
-
     }
 
-    static public void acceptDevis(){
-        System.out.print(" ==> Entre Client's ID: ");
-        Integer clientId = scanner.nextInt();
-        scanner.nextLine();
+    static public void acceptDevis() {
+        Integer clientId = InputValidator.validateInteger(" ==> Enter Client's ID: ");
+        Optional<Client> client = clientService.getClientById(clientId);
 
-        ClientRepository clientRepository = new ClientRepositoryImpl();
-        ClientService clientService = new ClientService(clientRepository);
-        Optional<Client> client =  clientService.getClientById(clientId);
-
-        if(client.isPresent()){
+        if (client.isPresent()) {
             ConsolePrinter.printClient(client.get());
+            QuoteService quoteService = new QuoteService();
+            List<Quote> quotesList = quoteService.getQuoteWithProject(client.get());
 
-            QuoteService QuoteService = new QuoteService();
-            List<Quote> quotesList = QuoteService.getQuoteWithProject(client.get());
-
-            for(Quote quotes : quotesList){
+            for (Quote quotes : quotesList) {
                 ConsolePrinter.printQuote(quotes);
             }
 
-            System.out.print(" ==> Do you want to accept a devis? [y/n]: ");
-            String saveChoice = scanner.nextLine();
-
-            if(saveChoice.equals("y")){
-                System.out.print(" ==> Enter Devis ID [To Accept]: ");
-                Integer quoteId = scanner.nextInt();
-                scanner.nextLine();
-
-                Quote currentquotes = quotesList.stream()
+            if (InputValidator.validateYesNo(" ==> Do you want to accept a devis?")) {
+                Integer quoteId = InputValidator.validateInteger(" ==> Enter Devis ID [To Accept]: ");
+                Quote currentQuote = quotesList.stream()
                         .filter(quote -> Objects.equals(quote.getId(), quoteId))
                         .findFirst()
                         .orElse(null);
 
-                assert currentquotes != null;
-                if(!currentquotes.getAccepted()){
+                if (currentQuote != null && !currentQuote.getAccepted()) {
                     try {
-                        Quote returnedQuotes = QuoteService.acceptQuote(currentquotes);
-                        ConsolePrinter.printSuccess("Devis Accepted Successfully: ID " + returnedQuotes.getId());
-                    } catch (Exception e){
+                        Quote returnedQuote = quoteService.acceptQuote(currentQuote);
+                        ConsolePrinter.printSuccess("Devis Accepted Successfully: ID " + returnedQuote.getId());
+                    } catch (Exception e) {
                         ConsolePrinter.printError(e.getMessage());
                     }
-
-                }else {
-                    ConsolePrinter.printError("Devis Already Accepted");
+                } else {
+                    ConsolePrinter.printError(currentQuote == null ? "Devis not found." : "Devis Already Accepted");
                 }
             }
-
-        }else {
+        } else {
             System.out.println("Client not found");
         }
-
     }
 
-    static private Material addMaterialsView(){
-        System.out.print(" ==> Entre the name of the Material: ");
-        String materialName = scanner.nextLine();
+    static private Material addMaterialsView() {
+        String materialName = InputValidator.validateNonEmptyString(" ==> Enter the name of the Material: ");
+        Double unitCost = InputValidator.validateDouble(" ==> Enter the Unit Cost of the material [MAD]: ");
+        Double quantity = InputValidator.validateDouble(" ==> Enter The Quantity of the Material: ");
+        Double taxRate = InputValidator.validateDouble(" ==> Add the Tax Rate [%]: ");
+        Double transport = InputValidator.validateDouble(" ==> Add Transport Cost [MAD]: ");
+        Double coefficient = InputValidator.validateDouble(" ==> Add Material quality coefficient (1.0 = standard > 1.0 = high quality): ");
 
-        System.out.print(" ==> Entre the Unit Cost of the material [MAD]: ");
-        Double unitCost = scanner.nextDouble();
-
-        System.out.print(" ==> Entre The Quantity of the Material: ");
-        Double quanitity = scanner.nextDouble();
-
-        System.out.print(" ==> Add the Tax Rate [%]: ");
-        Double taxRate = scanner.nextDouble();
-
-        System.out.print(" ==> Add Transport Cost [MAD]: ");
-        Double transport = scanner.nextDouble();
-
-        System.out.print(" ==> Add Material quality coefficient (1.0 = standard > 1.0 = high quality: ");
-        Double coefficient = scanner.nextDouble();
-
-        return new Material(materialName, taxRate, ComponentType.MATERIEL, null,  unitCost, quanitity, transport, coefficient);
-
+        return new Material(materialName, taxRate, ComponentType.MATERIEL, null, unitCost, quantity, transport, coefficient);
     }
 
-    static private Labour addLaborView(){
-        System.out.print(" ==> Entre the Type of the worker : ");
-        String workerType = scanner.nextLine();
+    static private Labour addLaborView() {
+        String workerType = InputValidator.validateNonEmptyString(" ==> Enter the Type of the worker: ");
+        Double taxRate = InputValidator.validateDouble(" ==> Add the Tax Rate [%]: ");
+        Double hourlyRate = InputValidator.validateDouble(" ==> Enter Hourly Rate of the Labor [MAD]: ");
+        Double workHoursCount = InputValidator.validateDouble(" ==> Enter the number of working hours [Hours]: ");
+        Double coefficient = InputValidator.validateDouble(" ==> Add Labor Productivity factor (1.0 = standard > 1.0 = high quality): ");
 
-        System.out.print(" ==> Add the Tax Rate [%]: ");
-        Double taxRate = scanner.nextDouble();
-
-        System.out.print(" ==> Entre Hourly Rate of the Labor [MAD]: ");
-        Double hourlyRate = scanner.nextDouble();
-
-        System.out.print(" ==> Entre the number od working hours [Hours]: ");
-        Double worKHoursCount = scanner.nextDouble();
-
-        System.out.print(" ==> Add Labor Productivity factor (1.0 = standard > 1.0 = high quality: ");
-        Double coefficient = scanner.nextDouble();
-
-        return new Labour(workerType, taxRate, ComponentType.LABOR, null,  hourlyRate, worKHoursCount, coefficient);
-
+        return new Labour(workerType, taxRate, ComponentType.LABOR, null, hourlyRate, workHoursCount, coefficient);
     }
 
-    static private void addDevisView(Project Project){
-        System.out.print(" ==> Do you want to Create Devis? [y/n]: ");
-        String devisChoice = scanner.nextLine();
+    static private void addquoteView(Project project) {
+        if (InputValidator.validateYesNo(" ==> Do you want to Create Devis?")) {
+            LocalDate issueDate = InputValidator.validateDate(" ==> Enter the issue date [YYYY-MM-DD]: ");
+            LocalDate validityDate = InputValidator.validateDate(" ==> Valid Until [YYYY-MM-DD]: ");
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String  issueDate = "";
-        String validity = "";
+            // Validate that issue date is before validity date
+            try {
+                InputValidator.validateIssueDateBeforeValidity(issueDate, validityDate);
+            } catch (IllegalArgumentException e) {
+                ConsolePrinter.printError(e.getMessage());
+                return; // Exit if validation fails
+            }
 
-
-        if(devisChoice.equals("y")){
-            System.out.print(" ==> Entre the issue date  [YYYY-MM-DD]: ");
-            issueDate = scanner.nextLine();
-            System.out.print(" ==> Valid Until [YYYY-MM-DD]: ");
-            validity = scanner.nextLine();
+            QuoteService quoteService = new QuoteService();
+            Quote quote = new Quote(null, project.getTotalCost(), issueDate, validityDate, Boolean.FALSE, project);
+            ConsolePrinter.printQuote(quote);
+            quoteService.createQuote(quote);
         }
-
-        QuoteService QuoteService = new QuoteService();
-        Quote quote = new Quote(
-                null,
-                Project.getTotalCost(),
-                LocalDate.parse(issueDate, formatter),
-                LocalDate.parse(validity, formatter),
-                Boolean.FALSE,
-                Project
-        );
-
-        ConsolePrinter.printQuote(quote);
-        QuoteService.createQuote(quote);
-
     }
 
     static private CostBreakdown calculateCost(List<Component> components) {
@@ -281,17 +194,47 @@ public class MainView {
     }
 
     static private double calculateBaseCost(Component component) {
-        if (component instanceof Material Material) {
-            return Material.getUnitCost()
-                    * Material.getQuantity()
-                    * Material.getQualityCoefficient()
-                    + Material.getTransportCost();
-        } else if (component instanceof Labour Labour) {
-            return Labour.getHourlyRate()
-                    * Labour.getWorkHoursCount()
-                    * Labour.getProductivityRate();
+        if (component instanceof Material material) {
+            return material.getUnitCost() * material.getQuantity() * material.getQualityCoefficient() + material.getTransportCost();
+        } else if (component instanceof Labour labour) {
+            return labour.getHourlyRate() * labour.getWorkHoursCount() * labour.getProductivityRate();
         }
-        return 0.0; // or throw an exception for unknown component types
+        return 0.0;
     }
 
+    public static void updateClient() {
+        System.out.print("Enter client ID to update: ");
+        int clientId = InputValidator.validateInteger("Client ID: ");
+        Optional<Client> clientOptional = clientService.getClientById(clientId);
+
+        if (clientOptional.isPresent()) {
+            Client client = clientOptional.get();
+            String name = InputValidator.validateNonEmptyString("Enter new client's name (leave empty to keep current): ");
+            if (!name.isEmpty()) client.setName(name);
+            String address = InputValidator.validateNonEmptyString("Enter new client's address (leave empty to keep current): ");
+            if (!address.isEmpty()) client.setAddress(address);
+            String phoneNumber = InputValidator.validatePhoneNumber("Enter new client's phone number (leave empty to keep current): ");
+            if (!phoneNumber.isEmpty()) client.setPhone(phoneNumber);
+            boolean isProfessional = InputValidator.validateYesNo("Is the client a professional? (Y/N, leave empty to keep current): ");
+            if (isProfessional) client.setProfessional(true);
+
+            clientService.updateClient(client);
+            System.out.println("Client updated successfully.");
+        } else {
+            System.out.println("Client not found.");
+        }
+    }
+
+    public static void deleteClient() {
+        System.out.print("Enter client ID to delete: ");
+        int clientId = InputValidator.validateInteger("Client ID: ");
+        Optional<Client> clientOptional = clientService.getClientById(clientId);
+
+        if (clientOptional.isPresent()) {
+            clientService.deleteClient(clientId);
+            System.out.println("Client deleted successfully.");
+        } else {
+            System.out.println("Client not found.");
+        }
+    }
 }
