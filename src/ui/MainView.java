@@ -3,9 +3,9 @@ package ui;
 import domain.entities.*;
 import domain.enums.ProjectStatus;
 import domain.enums.ComponentType;
-import service.ClientService;
-import service.QuoteService;
-import service.ProjectService;
+import service.implimentation.ClientServiceImpl;
+import service.implimentation.ProjectServiceImpl;
+import service.implimentation.QuoteServiceImpl;
 import utils.ConsolePrinter;
 import utils.Types.CostBreakdown;
 import repository.Interfaces.ClientRepository;
@@ -19,7 +19,7 @@ import java.util.*;
 public class MainView {
     private static final Scanner scanner = new Scanner(System.in);
     private static ClientRepository clientRepository = new ClientRepositoryImpl();
-    private static ClientService clientService = new ClientService(clientRepository);
+    private static ClientServiceImpl clientService = new ClientServiceImpl(clientRepository);
 
     static public void createClient() {
         String name = InputValidator.validateNonEmptyString(" ==> Enter Full Name: ");
@@ -42,7 +42,7 @@ public class MainView {
             Double profit = InputValidator.validateDouble(" ==> Enter Profit Margin (%): ");
 
             ProjectRepository projectRepository = new repository.implimentation.ProjectRepositoryImpl();
-            ProjectService projectService = new ProjectService(projectRepository);
+            ProjectServiceImpl projectService = new ProjectServiceImpl(projectRepository);
             Project project = new Project(null, projectName, profit, null, null, null);
             project.setClient(client.get());
 
@@ -96,7 +96,7 @@ public class MainView {
                 projectService.createprojectWithComponents(project);
             }
 
-            QuoteService quoteService = new QuoteService();
+            QuoteServiceImpl quoteService = new QuoteServiceImpl();
             addquoteView(project);
         } else {
             System.out.println("Client not found");
@@ -109,7 +109,7 @@ public class MainView {
 
         if (client.isPresent()) {
             ConsolePrinter.printClient(client.get());
-            QuoteService quoteService = new QuoteService();
+            QuoteServiceImpl quoteService = new QuoteServiceImpl();
             List<Quote> quotesList = quoteService.getQuoteWithProject(client.get());
 
             for (Quote quotes : quotesList) {
@@ -173,7 +173,7 @@ public class MainView {
                 return; // Exit if validation fails
             }
 
-            QuoteService quoteService = new QuoteService();
+            QuoteServiceImpl quoteService = new QuoteServiceImpl();
             Quote quote = new Quote(null, project.getTotalCost(), issueDate, validityDate, Boolean.FALSE, project);
             ConsolePrinter.printQuote(quote);
             quoteService.createQuote(quote);

@@ -41,7 +41,6 @@ CREATE TABLE labours (
     productivityrate DOUBLE PRECISION
 ) INHERITS (composants);
 
-ALTER TABLE labours OWNER TO "batiCuisine";
 
 CREATE TABLE quotes (
     id             INTEGER DEFAULT nextval('devis_id_seq'::regclass) NOT NULL PRIMARY KEY,
