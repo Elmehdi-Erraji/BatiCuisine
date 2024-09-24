@@ -1,16 +1,81 @@
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+import ui.MainView;
+import utils.ConsolePrinter;
+
+import java.util.Scanner;
+
+import static validation.InputValidator.validateIntInput;
+
 public class Main {
+
+    private static final Scanner scanner = new Scanner(System.in);
+
     public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+        while (true) {
+            ConsolePrinter.mainMenu();
 
+            int choice = validateIntInput(" ==> Enter your choice: ");
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
+            switch (choice) {
+                case 1:
+                    ConsolePrinter.clientMenu();
+                    int clientChoice = validateIntInput(" ==> Enter your choice for Client Menu: ");
+                    switch (clientChoice) {
+                        case 1:
+                            MainView.createClient();
+                            break;
+                        case 2:
+                            MainView.updateClient();
+                            break;
+                        case 3:
+                            MainView.deleteClient();
+                            break;
+                        case 4:
+                            MainView.acceptDevis();
+                            break;
+                        case 0:
+                            System.out.println("Returning to Main Menu...");
+                            break;
+                        default:
+                            ConsolePrinter.printError("Invalid choice in Client Menu. Please try again.");
+                    }
+                    break;
+
+                case 2:
+                    ConsolePrinter.projectMenu();
+                    int projectChoice = validateIntInput(" ==> Enter your choice for Project Menu: ");
+                    switch (projectChoice) {
+                        case 1:
+                            MainView.createProject();
+                            break;
+                        case 2:
+                            //MainView.updateProject();
+                            break;
+                        case 3:
+                            MainView.deleteProject();
+                            break;
+                        case 4:
+                            //MainView.addComponentsToProject();
+                            break;
+                        case 5:
+                            //MainView.getProjectDetails();
+                            break;
+                        case 0:
+                            System.out.println("Returning to Main Menu...");
+                            break;
+                        default:
+                            ConsolePrinter.printError("Invalid choice in Project Menu. Please try again.");
+                    }
+                    break;
+
+                case 3:
+                    System.exit(0);
+                    break;
+
+                default:
+                    ConsolePrinter.printError("Invalid choice in Main Menu. Please try again.");
+            }
         }
     }
+
+
 }
