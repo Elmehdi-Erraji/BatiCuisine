@@ -27,7 +27,7 @@ public class Main {
                             MainView.updateClient();
                             break;
                         case 3:
-                            MainView.deleteClient();
+                           MainView.deleteClient();
                             break;
                         case 4:
                             MainView.acceptDevis();
@@ -48,16 +48,11 @@ public class Main {
                             MainView.createProject();
                             break;
                         case 2:
-                            //MainView.updateProject();
-                            break;
-                        case 3:
                             MainView.deleteProject();
                             break;
-                        case 4:
-                            //MainView.addComponentsToProject();
-                            break;
-                        case 5:
-                            //MainView.getProjectDetails();
+
+                        case 3:
+                            MainView.getProjectDetails();
                             break;
                         case 0:
                             System.out.println("Returning to Main Menu...");

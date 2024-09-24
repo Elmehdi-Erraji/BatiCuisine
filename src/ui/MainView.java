@@ -263,4 +263,17 @@ public class MainView {
             System.out.println("Project not found.");
         }
     }
+
+    public static void getProjectDetails() {
+        int projectId = InputValidator.validateInteger(" ==> Enter Project's ID: ");
+        Optional<Project> projectOptional = projectService.getprojectById(projectId);
+
+        if (projectOptional.isPresent()) {
+            Project project = projectOptional.get();
+            ConsolePrinter.printProject(project);
+        } else {
+            System.out.println("Project not found.");
+        }
+    }
+
 }

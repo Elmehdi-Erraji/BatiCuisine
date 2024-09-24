@@ -20,6 +20,10 @@ public class Client {
         this.Projects = new ArrayList<>();
     }
 
+    public Client() {
+
+    }
+
     public Integer getId() {
         return id;
     }
