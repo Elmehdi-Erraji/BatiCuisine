@@ -3,6 +3,7 @@ import utils.ConsolePrinter;
 
 import java.util.Scanner;
 
+import static validation.InputValidator.validateIntInput;
 
 public class Main {
 
@@ -10,57 +11,63 @@ public class Main {
 
     public static void main(String[] args) {
         while (true) {
-            // Display the main BatiCuisine menu
             ConsolePrinter.mainMenu();
-            int choice = scanner.nextInt();
+
+            int choice = validateIntInput(" ==> Enter your choice: ");
 
             switch (choice) {
-                case 1: // Client Management Menu
+                case 1:
                     ConsolePrinter.clientMenu();
-                    int clientChoice = scanner.nextInt();
+                    int clientChoice = validateIntInput(" ==> Enter your choice for Client Menu: ");
                     switch (clientChoice) {
-                        case 1: // Add a Client
+                        case 1:
                             MainView.createClient();
                             break;
-                        case 2: // Update a Client
+                        case 2:
                             MainView.updateClient();
                             break;
-                        case 3: // Delete a Client
+                        case 3:
                             MainView.deleteClient();
                             break;
-                        case 4: // Accept/Refuse Quote
+                        case 4:
                             MainView.acceptDevis();
+                            break;
+                        case 0:
+                            System.out.println("Returning to Main Menu...");
                             break;
                         default:
                             ConsolePrinter.printError("Invalid choice in Client Menu. Please try again.");
                     }
                     break;
 
-                case 2: // Project Management Menu
+                case 2:
                     ConsolePrinter.projectMenu();
-                    int projectChoice = scanner.nextInt();
+                    int projectChoice = validateIntInput(" ==> Enter your choice for Project Menu: ");
                     switch (projectChoice) {
-                        case 5: // Create a new project
+                        case 1:
                             MainView.createProject();
                             break;
-                        case 6:
+                        case 2:
                             //MainView.updateProject();
                             break;
-                        case 7: // Delete a Project
-                            //MainView.deleteProject();
+                        case 3:
+                            MainView.deleteProject();
                             break;
-                        case 8: // Add Components to a Project
+                        case 4:
                             //MainView.addComponentsToProject();
                             break;
-                        case 9:
+                        case 5:
                             //MainView.getProjectDetails();
+                            break;
+                        case 0:
+                            System.out.println("Returning to Main Menu...");
                             break;
                         default:
                             ConsolePrinter.printError("Invalid choice in Project Menu. Please try again.");
                     }
                     break;
 
-                case 3: // Exit
+                case 3:
                     System.exit(0);
                     break;
 
@@ -69,5 +76,6 @@ public class Main {
             }
         }
     }
+
 
 }

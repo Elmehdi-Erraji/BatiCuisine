@@ -10,6 +10,8 @@ public interface ClientService {
 
     Optional<Client> getClientById(Integer id);
 
+    Optional<Client> getClientByName(String name);
+
     List<Client> getAllClients();
 
     Client updateClient(Client client);

@@ -40,7 +40,6 @@ public class DBConnection {
             try {
                 if (!connection.isClosed()) {
                     connection.close();
-                    System.out.println("Connection closed.");
                 }
             } catch (SQLException e) {
                 e.printStackTrace();

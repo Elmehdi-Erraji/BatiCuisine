@@ -26,6 +26,12 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
+    public Optional<Client> getClientByName(String name) {
+        return clientRepository.findByName(name);
+    }
+
+
+    @Override
     public List<Client> getAllClients() {
         return clientRepository.findAll();
     }

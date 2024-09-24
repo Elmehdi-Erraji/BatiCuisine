@@ -4,6 +4,8 @@ import domain.entities.Client;
 import domain.entities.Quote;
 import utils.Types.CostBreakdown;
 
+import static validation.InputValidator.validateIntInput;
+
 public class ConsolePrinter {
 
     public static void mainMenu() {
@@ -16,32 +18,33 @@ public class ConsolePrinter {
         System.out.println(" +----------------------------------------+");
         System.out.println(" |  ❌  3. Exit                           |");
         System.out.println(" +----------------------------------------+");
-        System.out.print(" ==> Enter your choice: ");
     }
 
     public static void clientMenu() {
+        System.out.println(" +----------------------------------------+");
         System.out.println(" |               Client Menu              |");
         System.out.println(" +----------------------------------------+");
         System.out.println(" |  👤  1. Add a Client                   |");
         System.out.println(" |  ✏️  2. Update a Client                |");
         System.out.println(" |  ❌  3. Delete a Client                |");
         System.out.println(" |  ✔️  4. Accept/Refuse Quote            |");
+        System.out.println(" |  🔙  0. Go back                        |");
         System.out.println(" +----------------------------------------+");
-        System.out.print(" ==> Enter your choice: ");
     }
 
     public static void projectMenu() {
         System.out.println(" +----------------------------------------+");
         System.out.println(" |               Project Menu             |");
         System.out.println(" +----------------------------------------+");
-        System.out.println(" |  📁  5. Create a new project           |");
-        System.out.println(" |  🔄  6. Update a Project               |");
-        System.out.println(" |  🗑️  7. Delete a Project               |");
-        System.out.println(" |  ➕  8. Add Components to a Project     |");
-        System.out.println(" |  ℹ️  9. Get Details of a Project        |");
+        System.out.println(" |  📁  1. Create a new project           |");
+        System.out.println(" |  🔄  2. Update a Project               |");
+        System.out.println(" |  🗑️  3. Delete a Project               |");
+        System.out.println(" |  ➕  4. Add Components to a Project     |");
+        System.out.println(" |  ℹ️  5. Get Details of a Project        |");
+        System.out.println(" |  🔙  0. Go back                        |");
         System.out.println(" +----------------------------------------+");
-        System.out.print(" ==> Enter your choice: ");
     }
+
 
 
     public static void printError(String message){

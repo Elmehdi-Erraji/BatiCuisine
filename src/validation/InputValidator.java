@@ -24,6 +24,17 @@ public class InputValidator {
         }
     }
 
+
+    public static int validateIntInput(String prompt) {
+        while (true) {
+            String input = validateNonEmptyString(prompt);
+            try {
+                return Integer.parseInt(input); // Attempt to parse input to an integer
+            } catch (NumberFormatException e) {
+                System.out.println("Error: Please enter a valid integer.");
+            }
+        }
+    }
     public static String validatePhoneNumber(String prompt) {
         String phoneNumber;
         Pattern phonePattern = Pattern.compile("\\d{10}");

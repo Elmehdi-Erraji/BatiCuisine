@@ -3,6 +3,7 @@ package ui;
 import domain.entities.*;
 import domain.enums.ProjectStatus;
 import domain.enums.ComponentType;
+import repository.implimentation.ProjectRepositoryImpl;
 import service.implimentation.ClientServiceImpl;
 import service.implimentation.ProjectServiceImpl;
 import service.implimentation.QuoteServiceImpl;
@@ -20,21 +21,33 @@ public class MainView {
     private static final Scanner scanner = new Scanner(System.in);
     private static ClientRepository clientRepository = new ClientRepositoryImpl();
     private static ClientServiceImpl clientService = new ClientServiceImpl(clientRepository);
+    private static ProjectRepository projectRepository = new ProjectRepositoryImpl();
+    private static ProjectServiceImpl projectService = new ProjectServiceImpl(projectRepository);
 
     static public void createClient() {
         String name = InputValidator.validateNonEmptyString(" ==> Enter Full Name: ");
-        String address = InputValidator.validateNonEmptyString(" ==> Enter Address: ");
-        String phoneNumber = InputValidator.validatePhoneNumber(" ==> Enter Phone Number: ");
-        boolean isProfessional = InputValidator.validateYesNo(" ==> Is Professional?");
+        String lowercaseName = name.toLowerCase();
 
-        Client newClient = new Client(null, name, address, phoneNumber, isProfessional);
-        clientService.createClient(newClient);
-        System.out.println("Client created Successfully");
+        Optional<Client> existingClient = clientService.getClientByName(lowercaseName);
+
+        if (existingClient.isPresent()) {
+            System.out.println("Error: A client with this name already exists. Please try again.");
+        } else {
+            String address = InputValidator.validateNonEmptyString(" ==> Enter Address: ");
+            String phoneNumber = InputValidator.validatePhoneNumber(" ==> Enter Phone Number: ");
+            boolean isProfessional = InputValidator.validateYesNo(" ==> Is Professional?");
+
+            Client newClient = new Client(null, name, address, phoneNumber, isProfessional);
+            clientService.createClient(newClient);
+            System.out.println("Client created Successfully");
+        }
     }
 
+
     static public void createProject() {
-        Integer clientId = InputValidator.validateInteger(" ==> Enter Client's ID: ");
-        Optional<Client> client = clientService.getClientById(clientId);
+        String clientName = InputValidator.validateNonEmptyString(" ==> Enter Client's Name: ");
+        String lowercaseName = clientName.toLowerCase();
+        Optional<Client> client = clientService.getClientByName(lowercaseName);
 
         if (client.isPresent()) {
             ConsolePrinter.printClient(client.get());
@@ -151,7 +164,7 @@ public class MainView {
     }
 
     static private Labour addLaborView() {
-        String workerType = InputValidator.validateNonEmptyString(" ==> Enter the Type of the worker: ");
+        String workerType = InputValidator.validateNonEmptyString(" ==> Enter the Name of the worker: ");
         Double taxRate = InputValidator.validateDouble(" ==> Add the Tax Rate [%]: ");
         Double hourlyRate = InputValidator.validateDouble(" ==> Enter Hourly Rate of the Labor [MAD]: ");
         Double workHoursCount = InputValidator.validateDouble(" ==> Enter the number of working hours [Hours]: ");
@@ -170,7 +183,7 @@ public class MainView {
                 InputValidator.validateIssueDateBeforeValidity(issueDate, validityDate);
             } catch (IllegalArgumentException e) {
                 ConsolePrinter.printError(e.getMessage());
-                return; // Exit if validation fails
+                return;
             }
 
             QuoteServiceImpl quoteService = new QuoteServiceImpl();
@@ -235,6 +248,19 @@ public class MainView {
             System.out.println("Client deleted successfully.");
         } else {
             System.out.println("Client not found.");
+        }
+    }
+
+    public static void deleteProject(){
+        System.out.println("Enter project ID to delete :");
+        int projectId = InputValidator.validateInteger("Project ID: ");
+        Optional<Project> projectOptional = projectService.getprojectById(projectId);
+
+        if (projectOptional.isPresent()) {
+            projectService.deleteproject(projectId);
+            System.out.println("Project deleted successfully.");
+        }else{
+            System.out.println("Project not found.");
         }
     }
 }

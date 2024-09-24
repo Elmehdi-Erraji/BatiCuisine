@@ -91,6 +91,35 @@ public class ClientRepositoryImpl implements ClientRepository {
         return Optional.empty();
     }
 
+
+    @Override
+    public Optional<Client> findByName(String name) {
+        String sql = "SELECT * FROM clients WHERE name = ?";
+
+        try {
+            dbConnection = DBConnection.getInstance();
+            if (dbConnection != null) {
+                connection = dbConnection.getConnection();
+
+                try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+                    stmt.setString(1, name);  // Set the name as a parameter
+                    ResultSet rs = stmt.executeQuery();
+                    if (rs.next()) {
+                        return Optional.of(Mappers.mapResultSetToClient(rs));  // Map the result set to a Client object
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (dbConnection != null) {
+                dbConnection.closeConnection();
+            }
+        }
+        return Optional.empty();
+    }
+
+
     @Override
     public List<Client> findAll() {
         List<Client> clientList = new ArrayList<>();
