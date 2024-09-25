@@ -37,7 +37,7 @@ public class LabourServiceImpl implements LabourService {
     }
 
     @Override
-    public void deleteLabour(Integer id) {
-        labourRepository.deleteById(id);
+    public void deleteLabour(Labour labour) {
+        labourRepository.deleteById(labour);
     }
 }

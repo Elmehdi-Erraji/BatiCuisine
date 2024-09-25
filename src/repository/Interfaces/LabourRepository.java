@@ -9,5 +9,5 @@ public interface LabourRepository {
     Labour save(Labour labour);
     Optional<Labour> findById(Integer id);
     List<Labour> findAll();
-    void deleteById(Integer id);
+    void deleteById(Labour labour);
 }

@@ -16,5 +16,5 @@ public interface ProjectService {
 
     Project updateproject(Project project);
 
-    void deleteproject(Integer id);
+    void delete(Project project);
 }

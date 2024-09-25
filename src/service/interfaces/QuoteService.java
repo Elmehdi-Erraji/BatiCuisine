@@ -15,7 +15,7 @@ public interface QuoteService {
 
     Quote updateQuote(Quote quote);
 
-    void deleteQuote(Integer id);
+    void delete(Quote quote);
 
     List<Quote> getQuoteWithProject(Client client);
 

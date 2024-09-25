@@ -134,7 +134,7 @@ public class MaterialsRepositoryImpl implements MaterialsRepository {
     }
 
     @Override
-    public void deleteById(Integer id) {
+    public void delete(Material material) {
         String sql = "DELETE FROM materials WHERE id = ?";
 
         try {
@@ -143,7 +143,7 @@ public class MaterialsRepositoryImpl implements MaterialsRepository {
                 connection = dbConnection.getConnection();
 
                 try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-                    stmt.setInt(1, id);
+                    stmt.setInt(1, material.getId()); // Use material's ID here
                     stmt.executeUpdate();
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -156,8 +156,6 @@ public class MaterialsRepositoryImpl implements MaterialsRepository {
                 dbConnection.closeConnection();
             }
         }
-
-
     }
 
 }
