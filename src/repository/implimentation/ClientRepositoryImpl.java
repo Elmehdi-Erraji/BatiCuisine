@@ -6,9 +6,7 @@ import domain.entities.Client;
 import repository.Interfaces.ClientRepository;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import utils.Mappers;
 
@@ -149,7 +147,7 @@ public class ClientRepositoryImpl implements ClientRepository {
     }
 
     @Override
-    public void deleteById(Integer id) {
+    public void deleteById(Client client) {
         String sql = "DELETE FROM clients WHERE id = ?";
 
         try {
@@ -158,7 +156,7 @@ public class ClientRepositoryImpl implements ClientRepository {
                 connection = dbConnection.getConnection();
 
                 try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-                    stmt.setInt(1, id);
+                    stmt.setInt(1, client.getId());
                     stmt.executeUpdate();
                 }
             }
@@ -198,5 +196,7 @@ public class ClientRepositoryImpl implements ClientRepository {
         }
         return clientList;
     }
+
+
 
 }

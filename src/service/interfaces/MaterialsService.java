@@ -14,5 +14,5 @@ public interface MaterialsService {
 
     Material updateMaterial(Material material);
 
-    void deleteMaterial(Integer id);
+    void delete(Material material);
 }

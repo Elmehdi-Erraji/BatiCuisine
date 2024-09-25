@@ -9,6 +9,6 @@ public interface MaterialsRepository {
     Material save(Material material);
     Optional<Material> findById(Integer id);
     List<Material> findAll();
-    void deleteById(Integer id);
+    void delete(Material material);
 }
 

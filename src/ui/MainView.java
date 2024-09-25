@@ -241,26 +241,42 @@ public class MainView {
     public static void deleteClient() {
         System.out.print("Enter client ID to delete: ");
         int clientId = InputValidator.validateInteger("Client ID: ");
+
         Optional<Client> clientOptional = clientService.getClientById(clientId);
 
         if (clientOptional.isPresent()) {
-            clientService.deleteClient(clientId);
+            Client client = clientOptional.get();
+            clientService.deleteClient(client);
             System.out.println("Client deleted successfully.");
         } else {
             System.out.println("Client not found.");
         }
     }
 
-    public static void deleteProject(){
-        System.out.println("Enter project ID to delete :");
+    public static void deleteProject() {
+        System.out.println("Enter project ID to delete:");
         int projectId = InputValidator.validateInteger("Project ID: ");
         Optional<Project> projectOptional = projectService.getprojectById(projectId);
 
         if (projectOptional.isPresent()) {
-            projectService.deleteproject(projectId);
+            Project project = projectOptional.get();
+            projectService.delete(project);
             System.out.println("Project deleted successfully.");
-        }else{
+        } else {
             System.out.println("Project not found.");
         }
     }
+
+    public static void getProjectDetails() {
+        int projectId = InputValidator.validateInteger(" ==> Enter Project's ID: ");
+        Optional<Project> projectOptional = projectService.getprojectById(projectId);
+
+        if (projectOptional.isPresent()) {
+            Project project = projectOptional.get();
+            ConsolePrinter.printProject(project);
+        } else {
+            System.out.println("Project not found.");
+        }
+    }
+
 }

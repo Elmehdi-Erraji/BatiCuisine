@@ -6,6 +6,7 @@ import repository.Interfaces.ClientRepository;
 import service.interfaces.ClientService;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class ClientServiceImpl implements ClientService {
@@ -42,17 +43,9 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public void deleteClient(Integer id) {
-        clientRepository.deleteById(id);
+    public void deleteClient(Client client) {
+        clientRepository.deleteById(client);
     }
 
-    @Override
-    public List<Client> getProfessionalClients() {
-        return clientRepository.findByProfessional(true);
-    }
 
-    @Override
-    public List<Client> getNonProfessionalClients() {
-        return clientRepository.findByProfessional(false);
-    }
 }

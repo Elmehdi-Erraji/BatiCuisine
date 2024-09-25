@@ -119,7 +119,7 @@ public class ProjectRepositoryImpl implements ProjectRepository {
     }
 
     @Override
-    public void deleteById(Integer id) {
+    public void delete(Project project) {
         String sql = "DELETE FROM projects WHERE id = ?";
 
         try {
@@ -128,8 +128,10 @@ public class ProjectRepositoryImpl implements ProjectRepository {
                 connection = dbConnection.getConnection();
 
                 try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-                    stmt.setInt(1, id);
+                    stmt.setInt(1, project.getId()); // Use project's ID here
                     stmt.executeUpdate();
+                } catch (SQLException e) {
+                    e.printStackTrace();
                 }
             }
         } catch (SQLException e) {
@@ -140,5 +142,6 @@ public class ProjectRepositoryImpl implements ProjectRepository {
             }
         }
     }
+
 
 }

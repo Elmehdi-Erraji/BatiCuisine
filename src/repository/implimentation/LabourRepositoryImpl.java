@@ -132,7 +132,7 @@ public class LabourRepositoryImpl implements LabourRepository {
     }
 
     @Override
-    public void deleteById(Integer id) {
+    public void deleteById(Labour labour) {
         String sql = "DELETE FROM labour WHERE id = ?";
 
         try {
@@ -140,7 +140,7 @@ public class LabourRepositoryImpl implements LabourRepository {
             if (dbConnection != null) {
                 connection = dbConnection.getConnection();
                 try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-                    pstmt.setInt(1, id);
+                    pstmt.setInt(1, labour.getId());
                     pstmt.executeUpdate();
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -153,8 +153,8 @@ public class LabourRepositoryImpl implements LabourRepository {
                 dbConnection.closeConnection();
             }
         }
-
     }
+
 
 
 }

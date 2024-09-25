@@ -10,7 +10,7 @@ public interface QuoteRepository {
      Quote save(Quote quote);
      Optional<Quote> findById(Integer id);
      List<Quote> findAll();
-     void deleteById(Integer id);
+     void delete(Quote quote);
      List<Quote> findQuoteWithProjectById(Client client);
      Quote update(Quote quote);
 }

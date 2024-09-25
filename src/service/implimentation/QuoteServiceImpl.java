@@ -19,32 +19,32 @@ public class QuoteServiceImpl implements QuoteService {
 
     @Override
     public Quote createQuote(Quote quote) {
-        return quoteRepository.save(quote); // Call on the instance
+        return quoteRepository.save(quote);
     }
 
     @Override
     public Optional<Quote> getQuoteById(Integer id) {
-        return quoteRepository.findById(id); // Call on the instance
+        return quoteRepository.findById(id);
     }
 
     @Override
     public List<Quote> getAllQuotes() {
-        return quoteRepository.findAll(); // Call on the instance
+        return quoteRepository.findAll();
     }
 
     @Override
     public Quote updateQuote(Quote quote) {
-        return quoteRepository.save(quote); // Call on the instance
+        return quoteRepository.save(quote);
     }
 
     @Override
-    public void deleteQuote(Integer id) {
-        quoteRepository.deleteById(id); // Call on the instance
+    public void delete(Quote quote) {
+        quoteRepository.delete(quote);
     }
 
     @Override
     public List<Quote> getQuoteWithProject(Client client) {
-        return quoteRepository.findQuoteWithProjectById(client); // Call on the instance
+        return quoteRepository.findQuoteWithProjectById(client);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class QuoteServiceImpl implements QuoteService {
         if (isPast) {
             newQuote.setAccepted(true);
             newQuote.setId(quote.getId());
-            return quoteRepository.update(newQuote); // Call on the instance
+            return quoteRepository.update(newQuote);
         } else {
             throw new Exception("Invalid Date");
         }

@@ -126,7 +126,7 @@ public class QuoteRepositoryImpl implements QuoteRepository {
     }
 
     @Override
-    public void deleteById(Integer id) {
+    public void delete(Quote quote) {
         String sql = "DELETE FROM quotes WHERE id = ?";
         try {
             dbConnection = DBConnection.getInstance();
@@ -134,7 +134,7 @@ public class QuoteRepositoryImpl implements QuoteRepository {
                 connection = dbConnection.getConnection();
 
                 try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-                    pstmt.setInt(1, id);
+                    pstmt.setInt(1, quote.getId());
                     pstmt.executeUpdate();
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -147,8 +147,8 @@ public class QuoteRepositoryImpl implements QuoteRepository {
                 dbConnection.closeConnection();
             }
         }
-
     }
+
 
     @Override
     public List<Quote> findQuoteWithProjectById(Client client) {

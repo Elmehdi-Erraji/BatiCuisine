@@ -9,7 +9,7 @@ public interface ProjectRepository {
     Project save(Project project);
     Optional<Project> findById(Integer id);
     List<Project> findAll();
-    void deleteById(Integer id);
+    void delete(Project project);
 }
 
 

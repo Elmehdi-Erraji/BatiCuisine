@@ -14,5 +14,5 @@ public interface LabourService {
 
     Labour updateLabour(Labour labour);
 
-    void deleteLabour(Integer id);
+    void deleteLabour(Labour labour);
 }
