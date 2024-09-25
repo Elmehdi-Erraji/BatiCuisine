@@ -13,7 +13,7 @@ CREATE TABLE projects (
     profit   DOUBLE PRECISION,
     totalcost    DOUBLE PRECISION,
     status       projectstatus,
-    client_id    INTEGER REFERENCES clients(id) ON DELETE CASCADE
+    client_id    INTEGER REFERENCES clients(id) ON DELETE CASCADE,
     discount DOUBLE PRECISION
 );
 
@@ -21,7 +21,7 @@ CREATE TABLE projects (
 CREATE TABLE components  (
     id      SERIAL PRIMARY KEY,
     name    VARCHAR(255) NOT NULL,
-    tax_rate DOUBLE PRECISION
+    tax_rate DOUBLE PRECISION,
     componenttype VARCHAR(50),
     project_id INTEGER REFERENCES projects(id) ON DELETE CASCADE
 );
@@ -43,7 +43,7 @@ CREATE TABLE labours (
 
 
 CREATE TABLE quotes (
-    id             INTEGER DEFAULT nextval('devis_id_seq'::regclass) NOT NULL PRIMARY KEY,
+    id             SERIAL PRIMARY KEY,
     estimatedprice DOUBLE PRECISION,
     issuedate      DATE,
     validitydate   DATE,
