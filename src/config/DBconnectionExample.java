@@ -4,15 +4,16 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class DBConnection {
-    private static DBConnection instance;
+public class DBconnectionExample {
+
+    private static DBconnectionExample instance;
     private final Connection connection;
 
-    private static final String URL = "jdbc:postgresql://localhost:5432/batiCuisine";
-    private static final String USER = "batiCuisine";
-    private static final String PASSWORD = "";
+    private static final String URL = "";//link to your db server
+    private static final String USER = "";//db username
+    private static final String PASSWORD = "";//db password
 
-    DBConnection() {
+    private DBconnectionExample() {
         Connection tempConnection = null;
         try {
             tempConnection = DriverManager.getConnection(URL, USER, PASSWORD);
@@ -22,11 +23,11 @@ public class DBConnection {
         this.connection = tempConnection;
     }
 
-    public static DBConnection getInstance() throws SQLException {
+    public static DBconnectionExample getInstance() throws SQLException {
         if (instance == null) {
-            instance = new DBConnection();
+            instance = new DBconnectionExample();
         } else if (instance.getConnection().isClosed()) {
-            instance = new DBConnection();
+            instance = new DBconnectionExample();
         }
         return instance;
     }
@@ -46,5 +47,4 @@ public class DBConnection {
             }
         }
     }
-
 }

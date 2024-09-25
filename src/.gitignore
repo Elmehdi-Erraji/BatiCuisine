@@ -1,0 +1,2 @@
+# Ignore database connection class
+./config/DBConnection.java
