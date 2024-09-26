@@ -9,6 +9,7 @@ public class Client {
     private String address;
     private String phone;
     private Boolean isProfessional;
+    private Boolean status;
     private List<Project> Projects;
 
     public Client(Integer id, String name, String address, String phone, Boolean isProfessional) {
@@ -17,11 +18,13 @@ public class Client {
         this.address = address;
         this.phone = phone;
         this.isProfessional = isProfessional;
+        this.status = false;
         this.Projects = new ArrayList<>();
     }
 
     public Client() {
-
+        this.status = false;
+        this.Projects = new ArrayList<>();
     }
 
     public Integer getId() {
@@ -62,6 +65,14 @@ public class Client {
 
     public void setProfessional(Boolean professional) {
         isProfessional = professional;
+    }
+
+    public Boolean isBlocked() {
+        return status;
+    }
+
+    public void setBlocked(Boolean status) {
+        this.status = status;
     }
 
     public List<Project> getProjects() {

@@ -13,7 +13,7 @@ public class Project {
     private Double discount;
     private ProjectStatus projectStatus;//status
     private Client client;
-    List<Component> components;
+    private List<Component> components;
 
     public Project(Integer id, String projectName, Double profit, Double totalCost, Double discount, ProjectStatus projectStatus) {
         this.id = id;

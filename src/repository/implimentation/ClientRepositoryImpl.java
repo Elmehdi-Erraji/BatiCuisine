@@ -198,5 +198,59 @@ public class ClientRepositoryImpl implements ClientRepository {
     }
 
 
+    public int getRejectedQuotesCount(Integer clientId) {
+        String sql = "SELECT COUNT(q.id) AS rejected_count " +
+                "FROM clients c " +
+                "JOIN projects p ON c.id = p.client_id " +
+                "JOIN quotes q ON p.id = q.project_id " +
+                "WHERE c.id = ? AND q.accepted = FALSE";
+
+        int rejectedCount = 0;
+
+        try {
+            dbConnection = DBConnection.getInstance();
+            Connection connection = dbConnection.getConnection();
+
+            try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+                stmt.setInt(1, clientId);
+
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        rejectedCount = rs.getInt("rejected_count");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (dbConnection != null) {
+                dbConnection.closeConnection();
+            }
+        }
+
+        return rejectedCount;
+    }
+
+
+    public void updateClientStatus(Integer clientId, Boolean status) {
+        String sql = "UPDATE clients SET status = ? WHERE id = ?";
+
+        try {
+            dbConnection = DBConnection.getInstance();
+            Connection connection = dbConnection.getConnection();
+
+            try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+                stmt.setBoolean(1, status);
+                stmt.setInt(2, clientId);
+                stmt.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (dbConnection != null) {
+                dbConnection.closeConnection();
+            }
+        }
+    }
 
 }

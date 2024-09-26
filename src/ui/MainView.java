@@ -50,6 +50,13 @@ public class MainView {
         Optional<Client> client = clientService.getClientByName(lowercaseName);
 
         if (client.isPresent()) {
+            try {
+                clientService.checkAndUpdateClientStatus(client.get().getId());
+            } catch (IllegalStateException e) {
+                System.out.println(e.getMessage());
+                return;
+            }
+
             ConsolePrinter.printClient(client.get());
             String projectName = InputValidator.validateNonEmptyString(" ==> Enter Project Name: ");
             Double profit = InputValidator.validateDouble(" ==> Enter Profit Margin (%): ");
@@ -115,6 +122,7 @@ public class MainView {
             System.out.println("Client not found");
         }
     }
+
 
     static public void acceptDevis() {
         Integer clientId = InputValidator.validateInteger(" ==> Enter Client's ID: ");

@@ -8,8 +8,11 @@ import domain.entities.Project;
 import repository.Interfaces.ProjectRepository;
 import service.interfaces.ProjectService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 public class ProjectServiceImpl implements ProjectService {
     private final ProjectRepository projectRepository;
@@ -69,4 +72,5 @@ public class ProjectServiceImpl implements ProjectService {
     public void delete(Project project) {
         projectRepository.delete(project);
     }
+
 }

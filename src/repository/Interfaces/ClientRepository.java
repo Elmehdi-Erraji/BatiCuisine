@@ -13,5 +13,7 @@ public interface ClientRepository {
     List<Client> findAll();
     void deleteById(Client client);
     List<Client> findByProfessional(Boolean isProfessional);
+    void updateClientStatus(Integer clientId, Boolean status);
+    int getRejectedQuotesCount(Integer clientId);
 }
 

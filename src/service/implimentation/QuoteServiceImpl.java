@@ -1,14 +1,16 @@
 package service.implimentation;
 
 import domain.entities.Client;
+import domain.entities.Project;
 import domain.entities.Quote;
 import repository.Interfaces.QuoteRepository;
 import repository.implimentation.QuoteRepositoryImpl;
 import service.interfaces.QuoteService;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 public class QuoteServiceImpl implements QuoteService {
     private final QuoteRepository quoteRepository;
@@ -60,4 +62,9 @@ public class QuoteServiceImpl implements QuoteService {
             throw new Exception("Invalid Date");
         }
     }
+
+
+
+
+
 }

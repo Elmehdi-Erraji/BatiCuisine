@@ -5,9 +5,11 @@ import domain.entities.Client;
 import repository.Interfaces.ClientRepository;
 import service.interfaces.ClientService;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class ClientServiceImpl implements ClientService {
     private final ClientRepository clientRepository;
@@ -47,5 +49,15 @@ public class ClientServiceImpl implements ClientService {
         clientRepository.deleteById(client);
     }
 
+    public void checkAndUpdateClientStatus(Integer clientId) {
+        int rejectedCount = clientRepository.getRejectedQuotesCount(clientId);
+
+        if (rejectedCount >= 2) {
+            clientRepository.updateClientStatus(clientId, true);
+
+            throw new IllegalStateException("Client has more than 5 rejected quotes and is blocked.");
+        }
+        System.out.println("Client is allowed to create new projects.");
+    }
 
 }

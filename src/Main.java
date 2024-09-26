@@ -1,3 +1,5 @@
+import repository.implimentation.ClientRepositoryImpl;
+import service.implimentation.ClientServiceImpl;
 import ui.MainView;
 import utils.ConsolePrinter;
 
@@ -70,6 +72,7 @@ public class Main {
                     ConsolePrinter.printError("Invalid choice in Main Menu. Please try again.");
             }
         }
+
     }
 
 

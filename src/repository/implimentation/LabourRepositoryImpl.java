@@ -18,7 +18,7 @@ public class LabourRepositoryImpl implements LabourRepository {
     @Override
     public Labour save(Labour labour) {
         String sql = labour.getId() == null ?
-                "INSERT INTO labour (name, tax_rate, hourlyrate, workhourscount, productivityrate, project_id) VALUES (?, ?, ?, ?, ?, ?)" :
+                "INSERT INTO labours (name, tax_rate, hourlyrate, workhourscount, productivityrate, project_id) VALUES (?, ?, ?, ?, ?, ?)" :
                 "UPDATE labour SET name = ?, tax_rate = ?, hourlyrate = ?, workhourscount = ?, productivityrate = ? WHERE id = ?";
 
         try {
@@ -71,7 +71,7 @@ public class LabourRepositoryImpl implements LabourRepository {
 
     @Override
     public Optional<Labour> findById(Integer id) {
-        String sql = "SELECT * FROM labour WHERE id = ?";
+        String sql = "SELECT * FROM labours WHERE id = ?";
 
         try {
             dbConnection = DBConnection.getInstance();
@@ -103,7 +103,7 @@ public class LabourRepositoryImpl implements LabourRepository {
     @Override
     public List<Labour> findAll() {
         List<Labour> labourList = new ArrayList<>();
-        String sql = "SELECT * FROM labour";
+        String sql = "SELECT * FROM labours";
 
         try {
             dbConnection = DBConnection.getInstance();
@@ -133,7 +133,7 @@ public class LabourRepositoryImpl implements LabourRepository {
 
     @Override
     public void deleteById(Labour labour) {
-        String sql = "DELETE FROM labour WHERE id = ?";
+        String sql = "DELETE FROM labours WHERE id = ?";
 
         try {
             dbConnection = DBConnection.getInstance();
